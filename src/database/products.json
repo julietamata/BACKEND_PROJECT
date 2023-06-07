@@ -1,0 +1,22 @@
+[
+	{
+		"title": "Tacones hate",
+		"description": "Tacones de la colección love-hate personalizados",
+		"price": 550,
+		"thumbnail": "https://firebasestorage.googleapis.com/v0/b/saramorchio-ecommerce.appspot.com/o/calz1.jpg?alt=media&token=0f175971-e468-44c8-a505-0664d19bf320",
+		"code": 145,
+		"stock": 8,
+		"status": true,
+		"id": "Y7-gWP_MB8oJuysOgAht9"
+	},
+	{
+		"title": "Tacones love",
+		"description": "Tacones de la colección love-hate personalizados",
+		"price": 750,
+		"thumbnail": "https://firebasestorage.googleapis.com/v0/b/saramorchio-ecommerce.appspot.com/o/calz6.png?alt=media&token=f06585f5-cda1-4df5-82f6-89c29521fc37",
+		"code": 132,
+		"stock": 5,
+		"status": true,
+		"id": "cMtP9yP4AMpaPrlBJIIq0"
+	}
+]
