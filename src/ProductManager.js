@@ -10,19 +10,25 @@ class ProductManager {
         
     }
 
+    // Función para leer la información de los productos existentes
+
     readProducts = async () => {
         let products = JSON.parse(await fs.promises.readFile(this.path, this.format))
         return products
     }
+    // Función para crear productos nuevos
 
     writeProducts = async (product) => {
         await fs.promises.writeFile(this.path, JSON.stringify(product, null, '\t'))
     }
+    // Función para revisar si un producto ya existe o si no
 
     prodExist = async (id) => {
         let products = await this.readProducts();
         return products.find(item => item.id === id)
     }
+
+    // Función para añadir los productos nuevos al array de productos, incluyendo los productos existentes, la función para leerlos y para crear los nuevos
 
     addProducts = async (product) => {
         let existingProducts = await this.readProducts()
@@ -32,9 +38,13 @@ class ProductManager {
         return "Producto agregado";
     };
 
+    // Función para obtener los productos
+
     getProducts = async () => {
         return await this.readProducts()
     }
+
+    // Función para traer los productos por medio de su Id
 
     getProductById = async (id) => {
         let products = await this.readProducts()
@@ -42,6 +52,8 @@ class ProductManager {
         if(!productById) return "Producto no encontrado" 
         return productById
     }  
+
+    // Función para actualizar un producto por medio del id
 
     updateProduct = async(id, updateProduct) => {
     let products = await this.readProducts()
@@ -53,6 +65,8 @@ class ProductManager {
     await this.writeProducts(newProduct)
     return "Producto actualizado"
 }
+
+    // Función para eliminar un producto
 
     deleteProduct = async (id) => {
         let products = await this.readProducts()

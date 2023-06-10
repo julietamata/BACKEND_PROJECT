@@ -40,7 +40,7 @@ router.put('/:id', async (req, res) => {
 })
 
 
-// endpoint para eliminar un product 
+// endpoint para eliminar un producto
  router.delete('/:id', async (req, res) => {
 	let id = req.params.id
 	

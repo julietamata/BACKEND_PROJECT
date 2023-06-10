@@ -12,19 +12,27 @@ class CartManager {
         this.error = undefined
     }
 
+    // Función para leer los carritos que están en el archivo json de carts
+
     readCarts = async () => {
         let carts = JSON.parse(await fs.promises.readFile(this.path, this.format))
         return carts
     }
     
+    // Función para crear carritos nuevos
+
     writeCarts = async (cart) => {
         await fs.promises.writeFile(this.path, JSON.stringify(cart, null, '\t'))
     }
+
+    // Función para saber si un carrito existe y poder usarla más adelante 
 
     cartExist = async (id) => {
         let carts = await this.readCarts();
         return carts.find(item => item.id === id)
     }
+
+    // Funcióon para añadir los carritos, usando la función para leer y crear carritos nuevos
 
     addCarts = async () => {
         let existingCarts = await this.readCarts();
@@ -34,6 +42,8 @@ class CartManager {
         return "Carrito agregado"
     }
 
+    // Función para traer la información de un carrito por su id
+
     getCartById = async (id) => {
         let carts = await this.readCarts()
         let cartById = carts.find(item => item.id === id)
@@ -41,6 +51,7 @@ class CartManager {
         return cartById
     }  
 
+    // Función para añadir productos al carrito, usando una función para saber si un producto existe y en caso de que exista solo agregar la cantidad y en caso de que no exista, agregar un producto nuevo al carrito
 
     addProductsToCart = async(cartId, productId) => {
         let cartById = await this.cartExist(cartId)
