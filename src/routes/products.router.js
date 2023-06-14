@@ -11,6 +11,8 @@ const product = new ProductManager();
 
 router.get('/', async (req, res) => {
 	res.send (await product.getProducts())
+
+
 })
 
 // endpoint para leer productos con limit 
@@ -22,6 +24,8 @@ router.get('/:id', async (req, res) => {
 	let id = req.params.id
 	
 	res.send (await product.getProductById(id))
+
+
 })
 
 // endpoint para crear un nuevo product
