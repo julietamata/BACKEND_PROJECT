@@ -18,6 +18,8 @@ app.engine('handlebars', handlebars.engine())
 app.set('views', './src/views')
 app.set('view engine', 'handlebars')
 
+
+
 //Lista productos
 app.get('/products', async (req, res) => {
     // res.render('home', {nombre_vista: 'Productos'})
@@ -47,11 +49,32 @@ app.use('/api/carts', cartsRouter)
 const serverHttp = app.listen(8080, () => console.log('Server up'))
 const io = new Server(serverHttp)
 
-io.on('connection', () => {
+app.set("socketio", io)
+
+io.on('connection', socket => {
     console.log('Se ha realizado una conexion')
+    socket.on('productList', data => {
+        // let productsUpdated = await products.addProducts(data)
+        io.emit('updateProducts', data)
+    })
 })
 
 // app.listen(8080, () => console.log('Server up'))
+
+
+// io.on("connection", socket => {
+//     console.log('A new client has connected to the Server')
+//     socket.on('productList',async(data) => {
+//         let products = await productManager.addProducts(data)
+//         io.emit('updatedProducts', products)
+//     })
+// })
+
+
+
+
+
+
 
 
 

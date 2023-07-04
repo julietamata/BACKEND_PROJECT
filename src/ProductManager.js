@@ -32,7 +32,7 @@ class ProductManager {
 
     addProducts = async (product) => {
         let existingProducts = await this.readProducts()
-        product.id = nanoid()
+        product.id = nanoid(3)
         let allProducts = [...existingProducts, product]
         await this.writeProducts(allProducts)
         return "Producto agregado";
