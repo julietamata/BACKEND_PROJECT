@@ -1,15 +1,19 @@
 import express from 'express'
 import productsRouter from './routes/products.router.js'
 import cartsRouter from  './routes/carts.router.js'
-import ProductManager from './ProductManager.js'
+import viewsRouter from './routes/views.router.js'
+import ProductManager from './dao/fsManagers/ProductManager.js'
 import handlebars from 'express-handlebars'
 import { Server } from 'socket.io'
+import mongoose from 'mongoose'
+
 
 
 
 
 const app = express()
 
+app.use(express.json())
 
 const products = new ProductManager();
 
@@ -18,6 +22,41 @@ app.engine('handlebars', handlebars.engine())
 app.set('views', './src/views')
 app.set('view engine', 'handlebars')
 
+mongoose.set('strictQuery', false)
+
+// const serverHttp = app.listen(8080, () => console.log('Server up'))
+// const io = new Server(serverHttp)
+
+// app.set("socketio", io)
+
+// io.on('connection', socket => {
+//     console.log('Se ha realizado una conexion')
+//     socket.on('productList', data => {
+//         // let productsUpdated = await products.addProducts(data)
+//         io.emit('updateProducts', data)
+//     })
+// })
+
+try {
+    await mongoose.connect('mongodb+srv://Alduin:alduin@cluster0.tq1ixbp.mongodb.net/ecommerce',
+    {useUnifiedTopology: true}
+    )
+    console.log('Se ha realizado una conexion')
+    const server = app.listen(8080, () => console.log('Server up'))
+    const io = new Server(server)
+    app.use((req, res, next) => {
+        req.io = io
+        next()
+    })
+    app.set("socketio", io)
+
+    io.on('connection', socket => {
+        
+        socket.on('productList', data => {
+            // let productsUpdated = await products.addProducts(data)
+            io.emit('updateProducts', data)
+        })
+    })
 
 
 //Lista productos
@@ -32,7 +71,6 @@ app.get('/realtimeproducts', async (req, res) => {
     // res.render('realTimeProducts', {nombre_vista: 'RrealTimeProducts'})
 })
 
-app.use(express.json())
 
 //middleware
 app.use(express.static('./src/public'))
@@ -44,20 +82,13 @@ app.use('/api/products', productsRouter)
 
 app.use('/api/carts', cartsRouter)
 
+app.use('/product', viewsRouter)
+
+}catch(err){
+
+}
 
 
-const serverHttp = app.listen(8080, () => console.log('Server up'))
-const io = new Server(serverHttp)
-
-app.set("socketio", io)
-
-io.on('connection', socket => {
-    console.log('Se ha realizado una conexion')
-    socket.on('productList', data => {
-        // let productsUpdated = await products.addProducts(data)
-        io.emit('updateProducts', data)
-    })
-})
 
 // app.listen(8080, () => console.log('Server up'))
 

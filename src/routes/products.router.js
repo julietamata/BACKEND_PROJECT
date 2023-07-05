@@ -1,5 +1,6 @@
 import { Router } from "express";
-import ProductManager from "../ProductManager.js";
+import ProductManager from "../dao/fsManagers/ProductManager.js";
+import productModel from "../dao/models/products.model.js";
 
 
 const router = Router()
@@ -34,6 +35,23 @@ router.post ('/', async (req, res) => {
     let newProduct = req.body
 	res.status(201).json(await product.addProducts(newProduct))
 })
+
+//endpoint mongoose
+
+router.post('/', async (req, res) => {
+    const product = req.body
+    try{
+        const result = await productModel.create(product)
+		const products = await productModel.find().lean().exec()
+		req.io.emit('updatedProducts', products)
+    res.status(201).json({status: 'success', payload: result})
+
+    }catch(err){
+        res.status(500).json({status:'error', error: err.message})
+    }
+})
+
+
 
 // endpoint para actualizar un product
 
