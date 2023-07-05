@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const cartSchema = new mongoose.Schema({
+const cartsSchema = new mongoose.Schema({
     products: {
         type: [{
             _id: false,
@@ -13,6 +13,6 @@ const cartSchema = new mongoose.Schema({
 
 mongoose.set('strictQuery', false)
 
-const cartModel = mongoose.model('carts', cartSchema)
+const cartsModel = mongoose.model('carts', cartsSchema)
 
-export default cartModel
+export default cartsModel

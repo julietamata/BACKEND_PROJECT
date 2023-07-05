@@ -1,15 +1,58 @@
-<div class="chat-container mb-4">
-  <h1 class="text-center text-white py-2">Messages</h1>
-  <div class="chat-logs p-4 text-white rounded-2">
-    <div>
-      <h4 id="user"></h4>
-      <input type="text" id="chatBox" class="chat-input mb-4" />
+<section style="background-color: #eee;">
+  <div class="container py-5">
+
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-8 col-lg-6 col-xl-4">
+
+        <div class="card" id="chat1" style="border-radius: 15px;">
+          <div 
+            class="card-header d-flex justify-content-between align-items-center p-3 bg-dark text-white border-bottom-0"
+            style= "border-top-left-radius: 15px; border-top-right-radius: 15px;">
+            <i class="fas fa-angle-left"></i>
+            <p class="mb-0 fw-bold"> My Chat</p>
+            <i class="fas fa-times"></i>
+          </div>
+          <div class="card-body">
+
+            
+                
+            <div class="d-flex flex-row justify-content-start mb-4">
+              <img src="https://icones.pro/wp-content/uploads/2021/02/icone-utilisateur.png"
+                alt="avatar 1" style="width: 45px; height: 100%;">
+                
+                <span id="user">   </span>
+              
+              <div class="p-3 ms-3" style="border-radius: 15px; background-color: rgba(7, 67, 87, 0.2);">
+                
+                <div class="small mb-0" id="messagesLogs">  Aqui estarán todos los mensajes enviados </div>
+              </div>
+            </div>
+
+            <div class="form-outline">
+              
+              <input class="form-control"rows="4" type="text" id="chatBox" />
+
+              <label class="form-label" for="textAreaExample"> Comienza a chatear con la comunidad </label>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div id="messagesLogs"></div>
+
   </div>
-</div>
+</section>
+
+
+    
+    
+    
+    
+    
 
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/chat.js"></script>

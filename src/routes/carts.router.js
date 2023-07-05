@@ -1,5 +1,6 @@
 import { Router } from "express";
 import CartManager from "../dao/fsManagers/CartManager.js";
+import cartsModel from "../dao/models/carts.model.js";
 
 const router = Router()
 const carts = new CartManager
@@ -20,6 +21,22 @@ router.get('/:id', async (req, res) => {
     
     // res.status(201).json({message: 'Lista de carritos'})
 })
+
+
+// Endpoint con mongoose
+
+router.post("/", async (req, res) => {
+    try {
+      const cart = req.body;
+      const addCart = await cartsModel.create(cart);
+      res.json({ status: "success", payload: addCart });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+
 
 // Ruta para agregar un carrito
 
