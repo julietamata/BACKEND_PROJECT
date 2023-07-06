@@ -1,3 +1,4 @@
+let socket = io()
 let chatBox = document.getElementById("chatBox");
 
 
@@ -12,7 +13,7 @@ Swal.fire({
 }).then(result => {
     user = result.value
     document.getElementById('user').innerHTML = user + ':'
-    const socket = io()
+    
 })
 
 
@@ -29,4 +30,15 @@ chatBox.addEventListener('keyup', event => {
         chatBox.value = '';
       }
     }
+  })
+
+  socket.on("logs", (data) => {
+    const divLogs = document.getElementById("messagesLogs");
+    let messages = "";
+    data.reverse().forEach((message) => {
+      messages += ` <div class="gradient p-2 my-2 rounded-2">
+      <p><strong><i>${message.user}</i>:</strong> ${message.message}</p>
+      </div>`;
+    });
+    divLogs.innerHTML = messages;
   })

@@ -6,6 +6,7 @@ import ProductManager from './dao/fsManagers/ProductManager.js'
 import handlebars from 'express-handlebars'
 import { Server } from 'socket.io'
 import mongoose from 'mongoose'
+import messageModel from './dao/models/message.model.js'
 
 
 
@@ -49,12 +50,24 @@ try {
     })
     app.set("socketio", io)
 
-    io.on('connection', socket => {
+    io.on('connection', async socket => {
         
         socket.on('productList', data => {
             // let productsUpdated = await products.addProducts(data)
             io.emit('updateProducts', data)
         })
+
+        let messages = (await messageModel.find()) ? await messageModel.find() : [];
+
+        socket.emit("logs", messages);
+        socket.on("message", async (data) => {
+          messages.push(data);
+          await messageModel.create(data)
+          io.emit("logs", messages)
+        })
+
+
+
     })
 
 
@@ -87,6 +100,9 @@ app.use('/mongoose', viewsRouter)
 
 }
 
+
+
+ 
 
 
 // app.listen(8080, () => console.log('Server up'))
