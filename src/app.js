@@ -58,7 +58,8 @@ try {
         })
 
         let messages = (await messageModel.find()) ? await messageModel.find() : [];
-
+        
+        socket.broadcast.emit('alerta')
         socket.emit("logs", messages);
         socket.on("message", async (data) => {
           messages.push(data);

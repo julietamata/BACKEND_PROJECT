@@ -1,4 +1,3 @@
-let socket = io()
 let chatBox = document.getElementById("chatBox");
 
 
@@ -13,32 +12,41 @@ Swal.fire({
 }).then(result => {
     user = result.value
     document.getElementById('user').innerHTML = user + ':'
-    
+    let socket = io()
+
+
+    chatBox.addEventListener('keyup', event => {
+      if (event.key === "Enter") {
+        if (chatBox.value.trim().length > 0) {
+          let newMessage = {
+            user,
+            message: chatBox.value,
+          };
+  
+          socket.emit("message", newMessage);
+  
+          chatBox.value = '';
+        }
+      }
+    })
+  
+    socket.on("logs", (data) => {
+      const divLogs = document.getElementById("messagesLogs");
+      let messages = "";
+      data.reverse().forEach((message) => {
+        messages += ` <div class="gradient p-2">
+        <p><strong><i>${message.user}</i>:</strong> ${message.message}</p>
+        </div>`;
+      });
+      divLogs.innerHTML = messages;
+    })
+
+      socket.on('alerta', () => {
+        alert('Nuevo usuario conectado...')
+      })
+
+
 })
 
 
-chatBox.addEventListener('keyup', event => {
-    if (event.key === "Enter") {
-      if (chatBox.value.trim().length > 0) {
-        let newMessage = {
-          user,
-          message: chatBox.value,
-        };
 
-        socket.emit("message", newMessage);
-
-        chatBox.value = '';
-      }
-    }
-  })
-
-  socket.on("logs", (data) => {
-    const divLogs = document.getElementById("messagesLogs");
-    let messages = "";
-    data.reverse().forEach((message) => {
-      messages += ` <div class="gradient p-2 my-2 rounded-2">
-      <p><strong><i>${message.user}</i>:</strong> ${message.message}</p>
-      </div>`;
-    });
-    divLogs.innerHTML = messages;
-  })
