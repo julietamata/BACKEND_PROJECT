@@ -13,6 +13,7 @@ Swal.fire({
     user = result.value
     document.getElementById('user').innerHTML = user + ':'
     let socket = io()
+  
 
 
     chatBox.addEventListener('keyup', event => {
@@ -42,7 +43,22 @@ Swal.fire({
     })
 
       socket.on('alerta', () => {
-        alert('Nuevo usuario conectado...')
+
+            Swal.fire({
+            icon: 'info',
+            title: 'Un nuevo usuario se ha conectado',
+            showConfirmButton: false,
+            toast: true,
+            timer: 2000,
+            position: 'top-end',
+            timerProgressBar: true,
+            
+          }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+              console.log('I was closed by the timer')
+            }
+            
+          })
       })
 
 
