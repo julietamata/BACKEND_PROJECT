@@ -29,28 +29,13 @@ router.get('/:id', async (req, res) => {
 
 })
 
+
 // endpoint para crear un nuevo product
 
 router.post ('/', async (req, res) => {
     let newProduct = req.body
 	res.status(201).json(await product.addProducts(newProduct))
 })
-
-//endpoint mongoose
-
-router.post('/', async (req, res) => {
-    const product = req.body
-    try{
-        const result = await productModel.create(product)
-		const products = await productModel.find().lean().exec()
-		req.io.emit('updatedProducts', products)
-    res.status(201).json({status: 'success', payload: result})
-
-    }catch(err){
-        res.status(500).json({status:'error', error: err.message})
-    }
-})
-
 
 
 // endpoint para actualizar un product
@@ -70,7 +55,93 @@ router.put('/:id', async (req, res) => {
  })
 
 
-export default router
+
+
+
+
+
+
+
+//endpoints mongoose
+
+
+router.get('/mongoose', async (req, res) => {
+	try{
+		const limit = req.query.limit || 10
+		const result = await productModel.find().limit(limit).lean().exec()
+		res.status(201).json({status: 'success', payload:result})
+		
+	} catch(err) {
+		res.status(500).json({status: 'error', error: 'No hay products'})
+	}
+})
+
+
+router.get('/mongoose/:pid', async (req, res) => {
+	try{
+		const id = req.params.pid
+		const result = await productModel.findById(id).lean().exec()
+		if (result === null) { 
+		res.status(500).json({status: 'error', error: err.message})
+		}
+		res.status(201).json({status: 'success', payload:result})
+		
+	} catch(err) {
+		res.status(500).json({status: 'error', error: err.message})
+	}
+})
+
+
+
+router.post('/mongoose', async (req, res) => {
+    const product = req.body
+    try{
+        const result = await productModel.create(product)
+		const products = await productModel.find().lean().exec()
+		req.io.emit('updatedProducts', products)
+    res.status(201).json({status: 'success', payload: result})
+
+    }catch(err){
+        res.status(500).json({status:'error', error: err.message})
+    }
+}) 
+
+router.put('/moongose/:pid', async (req, res) => {
+	try{
+		const id = req.params.pid
+		const data = req.body
+		const result = await productModel.findByIdAndUpdate(id, data, {returnDocument: 'after'})
+		if (result === null){
+			res.status(500).json({status:'error', error: err.message})
+		}
+		const products = await productModel.find().lean().exec()
+		req.io.emit('updatedProducts', products)
+		res.status(201).json({status: 'success', payload: result})
+	} catch(err){
+		res.status(500).json({status:'error', error: err.message})
+	}
+})
+
+
+router.delete('/moongose/:pid', async (req, res) => {
+	try{
+		const id = req.params.pid
+		const result = await productModel.findByIdAndDelete(id)
+		if (result === null){
+			res.status(500).json({status:'error', error: err.message})
+		}
+		const products = await productModel.find().lean().exec()
+		req.io.emit('updatedProducts', products)
+		res.status(201).json({status: 'success', payload: products})
+
+	}catch(err) {
+		res.status(500).json({status:'error', error: err.message})
+	}
+})
+
+
+
+ export default router
 
 
 
@@ -162,16 +233,7 @@ export default router
 // export default router
 
 // let products  = [
-	// {
-	// 	"id": 1,
-	// 	"title": "Sandalias Marroquí",
-	// 	"description": "Sandalias hechas a mano de la colección marroquí",
-	// 	"price": 450,
-	// 	"thumbnail": "https://firebasestorage.googleapis.com/v0/b/saramorchio-ecommerce.appspot.com/o/calz2.jpg?alt=media&token=b223f369-5264-4358-af5f-53eab965c6e8",
-	// 	"code": 152,
-	// 	"stock": 9, 
-    //     "status" : true
-	// },
+	// 
 	// {
 	// 	"id": 2,
 	// 	"title": "Bolsa Marroquí",
