@@ -97,92 +97,92 @@ document.getElementById('submitProduct').addEventListener('click', () => {
     //   }); 
 
 
-    socket.on('updateProducts', (products) => {
-  productsTable.innerHTML =   
-    `
-    <thead>
-      <tr>
-        <th scope="col">Eliminar Productosssddsss</th>
-        <th scope="col">ID</th>
-        <th scope="col">Producto</th> 
-        <th scope="col">Descripción</th>
-        <th scope="col">Precio</th>
-        <th scope="col">Código</th>
-        <th scope="col">Stock</th>
-        <th scope="col">Status</th>
-        <th scope="col">Imágenes</th>
-      </tr>
-    </thead>
-    `;
+//     socket.on('updateProducts', (products) => {
+//   productsTable.innerHTML =   
+//     `
+//     <thead>
+//       <tr>
+//         <th scope="col">Eliminar Productosssddsss</th>
+//         <th scope="col">ID</th>
+//         <th scope="col">Producto</th> 
+//         <th scope="col">Descripción</th>
+//         <th scope="col">Precio</th>
+//         <th scope="col">Código</th>
+//         <th scope="col">Stock</th>
+//         <th scope="col">Status</th>
+//         <th scope="col">Imágenes</th>
+//       </tr>
+//     </thead>
+//     `;
 
-  if (Array.isArray(products)) {
-    // 'products' ya es un array, puedes continuar con la lógica actual
-    products.forEach((product) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = ` 
-        <td> <button type="button" class="btn btn-danger" onclick="deleteProduct('${product.id}')">Eliminar</button></td>
-        <th scope="row">${product.id}</th>
-        <td>${product.title}</td>
-        <td>${product.description}</td>
-        <td>${product.price}</td>
-        <td>${product.code}</td>
-        <td>${product.stock}</td>
-        <td>${product.status}</td>
-        <td><img src="${product.thumbnail}" alt=""></td>
-      `;
-      productsTable.appendChild(tr);
-    });
-  } else if (typeof products === 'object') {
+//   if (Array.isArray(products)) {
+//     // 'products' ya es un array, puedes continuar con la lógica actual
+//     products.forEach((product) => {
+//       const tr = document.createElement('tr');
+//       tr.innerHTML = ` 
+//         <td> <button type="button" class="btn btn-danger" onclick="deleteProduct('${product.id}')">Eliminar</button></td>
+//         <th scope="row">${product.id}</th>
+//         <td>${product.title}</td>
+//         <td>${product.description}</td>
+//         <td>${product.price}</td>
+//         <td>${product.code}</td>
+//         <td>${product.stock}</td>
+//         <td>${product.status}</td>
+//         <td><img src="${product.thumbnail}" alt=""></td>
+//       `;
+//       productsTable.appendChild(tr);
+//     });
+//   } else if (typeof products === 'object') {
 
-    const productsArray = Object.values(products);
-    productsArray.forEach((product) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = ` 
-        <td> <button type="button" class="btn btn-danger" onclick="deleteProduct('${product.id}')">Eliminar</button></td>
-        <th scope="row">${product.id}</th>
-        <td>${product.title}</td>
-        <td>${product.description}</td>
-        <td>${product.price}</td>
-        <td>${product.code}</td>
-        <td>${product.stock}</td>
-        <td>${product.status}</td>
-        <td><img src="${product.thumbnail}" alt=""></td>
-      `;
-      productsTable.appendChild(tr);
-      console.log(products)
-    });
-  } else {
-    console.log('No es un array ni un objeto válido');
-  }
-});
-
-
+//     const productsArray = Object.values(products);
+//     productsArray.forEach((product) => {
+//       const tr = document.createElement('tr');
+//       tr.innerHTML = ` 
+//         <td> <button type="button" class="btn btn-danger" onclick="deleteProduct('${product.id}')">Eliminar</button></td>
+//         <th scope="row">${product.id}</th>
+//         <td>${product.title}</td>
+//         <td>${product.description}</td>
+//         <td>${product.price}</td>
+//         <td>${product.code}</td>
+//         <td>${product.stock}</td>
+//         <td>${product.status}</td>
+//         <td><img src="${product.thumbnail}" alt=""></td>
+//       `;
+//       productsTable.appendChild(tr);
+//       console.log(products)
+//     });
+//   } else {
+//     console.log('No es un array ni un objeto válido');
+//   }
+// });
 
 
 
-    // socket.on('updateProducts', data => {
-    //     if (data !== null){
-    //         productsTable.innerHTML = '';
-    //         data.forEach(product => {
-    //             let productHtml = `
-    //         <tr>
-    //             <td> <button type="button" class="btn btn-danger" onclick="deleteProduct('${product.id}')">Eliminar</button></td>
-    //             <th scope="row">${product.id}</th>
-    //             <td>${product.title}</td>
-    //             <td>${product.description}</td>
-    //             <td>${product.price}</td>
-    //             <td>${product.code}</td>
-    //             <td>${product.stock}</td>
-    //             <td>${product.status}</td>
-    //             <td><img src="${product.thumbnail}" alt=""></td>
-    //          </tr>
-    //             `;
 
-    //             productsTable.innerHTML+= productHtml;
+
+    socket.on('updateProducts', data => {
+        if (data !== null){
+            productsTable.innerHTML = '';
+            data.forEach(product => {
+                let productHtml = `
+            <tr>
+                <td> <button type="button" class="btn btn-danger" onclick="deleteProduct('${product.id}')">Eliminar</button></td>
+                <th scope="row">${product.id}</th>
+                <td>${product.title}</td>
+                <td>${product.description}</td>
+                <td>${product.price}</td>
+                <td>${product.code}</td>
+                <td>${product.stock}</td>
+                <td>${product.status}</td>
+                <td><img src="${product.thumbnail}" alt=""></td>
+             </tr>
+                `;
+
+                productsTable.innerHTML+= productHtml;
                 
-    //         });
-    //     }
-    // })
+            });
+        }
+    })
 
 
 

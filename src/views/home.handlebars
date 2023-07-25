@@ -1,34 +1,140 @@
-<h1> LISTA DE PRODUCTOS </h1>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+<script>
+           
+ addToTheCart = (pid) => {
+    const cid = '64bc5babe8a61439b9a8fcff' // carrito hardcodeado por el momento
+    fetch(`/api/carts/mongoose/${cid}/product/${pid}`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+  
+        Swal.fire({
+          title: `El producto ${pid} ha sido añadido! `,
+          icon: 'info',
+          showConfirmButton:false,
+          toast: true,
+          timer: 2000,
+          position: 'top-end',
+          timerProgressBar: true,
+
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) 
+            {console.log('I was closed by the timer')}
+      });
+  
+      })
+      .catch(error => {
+        console.error('Error al agregar producto al carrito:', error);
+      })
+  }
+
+
+
+</script>
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Lista de productos</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Categoría
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Calzado</a></li>
+            <li><a class="dropdown-item" href="#">Accesorios</a></li>
+            <li><a class="dropdown-item" href="#">Bolsos</a></li>
+          </ul>
+        </li>
+        
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+
+
+
 
 <table class="table table-dark table-striped">
   <thead>
     <tr>
-      <th scope="col">ID</th>
+      {{!-- <th scope="col">ID</th> --}}
       <th scope="col">Producto</th>
       <th scope="col">Descripción</th>
       <th scope="col">Precio</th>
       <th scope="col">Código</th>
       <th scope="col">Stock</th>
       <th scope="col">Status</th>
+      <th scope="col">Categoría</th>
       <th scope="col">Imágenes</th>
+      <th scope="col"> Agregar </th>
     </tr>
   </thead>
   <tbody>
-    {{#each products}}
+    {{#each products.docs }}
     <tr>
-      <th scope="row">{{this.id}}</th>
+      {{!-- <th scope="row">{{this.id}}</th> --}}
       <td>{{this.title}}</td>
       <td>{{this.description}}</td>
       <td>{{this.price}}</td>
       <td>{{this.code}}</td>
       <td>{{this.stock}}</td>
       <td>{{this.status}}</td>
+      <td>{{this.category}}</td>
       <td><img src="{{this.thumbnail}}" alt=""></td>
-      
+      <td> <a class="btn btn-secondary"  onclick="addToTheCart('{{this._id}}')"  href="#" role="button"><img src="https://cdn.icon-icons.com/icons2/933/PNG/512/shopping-cart_icon-icons.com_72552.png" width="20" alt=""> </a> </td>
+
+
     </tr>
+
+
     {{/each}}
-  </tbody>
-</table>
+
+    </tbody>
+
+    </table>
+      {{#if hasPrevPage}}
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+       <a href="{{prevLink}}"> <button class="btn btn-secondary me-md-2" type="button">Anterior</button> </a>
+      {{/if}}
+      {{#if hasNextPage}}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+       <a href="{{nextLink}}"> <button class="btn btn-secondary me-md-2" type="button">Siguiente</button> </a>
+     {{/if}}
+      </div>
+     
 
 
-{{!-- {{> index}} --}}
+
+
+
+{{!-- <script src="/js/cart.js"></script> --}}
+
+
+

@@ -14,7 +14,7 @@ import messageModel from './dao/models/message.model.js'
 const app = express()
 
 app.use(express.json())
-
+app.use(express.urlencoded({extended:true}))
 const products = new ProductManager();
 
 // Configuración del motor de plantillas
@@ -98,7 +98,7 @@ app.use('/api/carts', cartsRouter)
 app.use('/mongoose', viewsRouter)
 
 }catch(err){
-
+    console.log(err.message)
 }
 
 

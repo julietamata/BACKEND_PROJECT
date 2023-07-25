@@ -8,51 +8,51 @@ const router = Router()
 const product = new ProductManager();
 
 
-// endpoint para leer products
+// // endpoint para leer products
 
-router.get('/', async (req, res) => {
-	res.send (await product.getProducts())
-
-
-})
-
-// endpoint para leer productos con limit 
+// router.get('/', async (req, res) => {
+// 	res.send (await product.getProducts())
 
 
-// endpoint para leer un solo producto por su id
+// })
 
-router.get('/:id', async (req, res) => {
-	let id = req.params.id
+// // endpoint para leer productos con limit 
+
+
+// // endpoint para leer un solo producto por su id
+
+// router.get('/:id', async (req, res) => {
+// 	let id = req.params.id
 	
-	res.send (await product.getProductById(id))
+// 	res.send (await product.getProductById(id))
 
 
-})
+// })
 
 
-// endpoint para crear un nuevo product
+// // endpoint para crear un nuevo product
 
-router.post ('/', async (req, res) => {
-    let newProduct = req.body
-	res.status(201).json(await product.addProducts(newProduct))
-})
-
-
-// endpoint para actualizar un product
-
-router.put('/:id', async (req, res) => {
-	let id = req.params.id
-	let updateProduct = req.body;
-	res.send(await product.updateProduct(id, updateProduct))
-})
+// router.post ('/', async (req, res) => {
+//     let newProduct = req.body
+// 	res.status(201).json(await product.addProducts(newProduct))
+// })
 
 
-// endpoint para eliminar un producto
- router.delete('/:id', async (req, res) => {
-	let id = req.params.id
+// // endpoint para actualizar un product
+
+// router.put('/:id', async (req, res) => {
+// 	let id = req.params.id
+// 	let updateProduct = req.body;
+// 	res.send(await product.updateProduct(id, updateProduct))
+// })
+
+
+// // endpoint para eliminar un producto
+//  router.delete('/:id', async (req, res) => {
+// 	let id = req.params.id
 	
-	res.send(await product.deleteProduct(id))
- })
+// 	res.send(await product.deleteProduct(id))
+//  })
 
 
 
@@ -62,7 +62,7 @@ router.put('/:id', async (req, res) => {
 
 
 
-//endpoints mongoose
+//endpoints mongoose data onwire
 
 
 router.get('/mongoose', async (req, res) => {

@@ -5,15 +5,58 @@ import cartsModel from "../dao/models/carts.model.js";
 
 const router = Router()
 
-router.get("/", async (req, res) => {
-    try {
-      const products = await productsModel.find().lean().exec()
-      res.render('home', { products })
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ status: 'error', error: error.message });
+// Vistas productos render
+
+
+
+router.get("/products", async (req, res) => {
+  try {
+    let page = parseInt(req.query.page) || 1
+    let limit = parseInt(req.query.limit) || 4
+
+
+    
+    const filterOptions = {}
+    
+    if (req.query.stock) filterOptions.stock = req.query.stock
+
+    if (req.query.category) filterOptions.category = req.query.category
+
+    const paginateOptions = {limit, page, lean: true}
+
+    if (req.query.sort === 'asc') paginateOptions.sort = { price: 1}
+
+    if (req.query.sort === 'desc') paginateOptions.sort = { price: -1}
+
+    const result = await productsModel.paginate(filterOptions, paginateOptions)
+    // const result = await productsModel.paginate({}, { page, limit, lean: true})
+
+    result.prevLink = result.hasPrevPage ? `/mongoose/products?page=${result.prevPage}`
+                                             : ''
+    result.nextLink = result.hasNextPage ? `/mongoose/products?page=${result.nextPage}`
+                                            : ''
+    //  const products = await result.find().lean().exec()
+    console.log(result)
+
+    res.render('home', {
+      
+      products: result,
+      prevLink: result.prevLink,
+      nextLink: result.nextLink,
+      hasNextPage: result.hasNextPage,
+      hasPrevPage: result.hasPrevPage,
+      nextPage: result.nextPage,
+      prevPage: result.prevPage
     }
-  })
+      )
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: 'error', error: error.message });
+  }
+})
+
+
   
   router.get("/realtimeproducts", async (req, res) => {
     try {
@@ -25,6 +68,9 @@ router.get("/", async (req, res) => {
     }
   })
 
+
+  // Vista del chat
+
 router.get("/chat", async (req, res) => {
     try {
       const messages = await messageModel.find().lean().exec();
@@ -34,5 +80,27 @@ router.get("/chat", async (req, res) => {
       res.status(500).json({ error: error });
     }
   });
+
+
+
+  // Vista del carrito
+
+  router.get("/carts/:cid", async (req, res) => {
+    try{
+      const cid = req.params.cid
+      const result = await cartsModel.findById(cid).populate('products.product').lean().exec();
+      if (result === null) {
+        
+        return res.status(404).json({status: 'error', error: 'El carrito no existe'})
+      }
+      res.render('carts', {cid: result._id, products: result.products})
+      console.log(result)
+    }catch(err){
+      res.status(500).json({status: 'error', error: err.message})
+    }
+  })
+
+
+
 
   export default router
