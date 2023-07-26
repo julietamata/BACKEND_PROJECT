@@ -7,15 +7,36 @@ import handlebars from 'express-handlebars'
 import { Server } from 'socket.io'
 import mongoose from 'mongoose'
 import messageModel from './dao/models/message.model.js'
-
-
+import sessionRouter from './routes/session.router.js'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
 
 
 const app = express()
 
+
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 const products = new ProductManager();
+
+
+
+app.use(
+    session({
+      store: MongoStore.create({
+        mongoUrl: 'mongodb+srv://Alduin:alduin@cluster0.tq1ixbp.mongodb.net/ecommerce',
+        dbName: 'ecommerce',
+        mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+      }),
+      secret: "secretPass",
+      resave: true,
+      saveUninitialized: true,
+    })
+  );
+  
+
+
+
 
 // Configuración del motor de plantillas
 app.engine('handlebars', handlebars.engine())
@@ -96,6 +117,8 @@ app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 
 app.use('/mongoose', viewsRouter)
+
+app.use('/api', sessionRouter)
 
 }catch(err){
     console.log(err.message)

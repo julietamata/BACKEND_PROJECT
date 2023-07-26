@@ -1,0 +1,59 @@
+
+    <div class="row register-container">
+      <div class="col-md-5 mx-auto">
+        <div class="card bg-white">
+          <div class="card-header text-dark col d-flex justify-content-center">
+            ¡Regístrate y conoce todos nuestros productos!
+          </div>
+          <div class="card-body">
+            
+            <form action="/session/register" method="POST">
+
+              <div class="row">
+            <div class="col">
+                <!-- Name input -->
+                <div class="form-outline">
+                <input type="text" class="form-control mb-4" name="first_name" id="first_name" placeholder="First Name" value="{{first_name}}" required>
+                </div>
+            </div>
+            <div class="col">
+                <!-- Email input -->
+                <div class="form-outline">
+                    <input type="text" class="form-control mb-4" name="last_name" id="last_name" placeholder="Last Name" value="{{last_name}}" required>
+                </div>
+            </div>
+            </div>
+
+            <div class="row">
+            <div class="col">
+                <!-- Name input -->
+                <div class="form-outline">
+                <input type="email" class="form-control mb-4" name="email" id="email" placeholder="Email" value="{{email}}" required>
+                </div>
+            </div>
+            <div class="col">
+                <!-- Email input -->
+                <div class="form-outline">
+                    <input type="number" class="form-control mb-4" name="age" id="age" placeholder="Age" value="{{age}}" required>
+                </div>
+            </div>
+            </div>
+
+            <hr />
+              
+              <div class="form-group">
+                <input type="password" class="form-control mb-4" name="password" id="password" placeholder="Password" required>
+              </div>
+              <!-- Uncomment the following lines if you want to include a password confirmation field -->
+              <!-- <div class="form-group">
+                <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required>
+              </div> -->
+ 
+            <div class="d-grid gap-2">
+                <button class="btn btn-secondary" type="submit">Sign Up</button>
+            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+     </div>
