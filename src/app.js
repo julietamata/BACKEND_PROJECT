@@ -25,7 +25,7 @@ app.use(
     session({
       store: MongoStore.create({
         mongoUrl: 'mongodb+srv://Alduin:alduin@cluster0.tq1ixbp.mongodb.net/ecommerce',
-        dbName: 'ecommerce',
+        dbName: "ecommerce",
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
       }),
       secret: "secretPass",
