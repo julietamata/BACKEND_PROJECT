@@ -102,8 +102,7 @@
 import { Router } from "express";
 import usersModel from "../dao/models/users.model.js";
 import bcrypt from "bcrypt";
-import { createHash } from "../utils.js";
-import { isValidPassword } from "../utils.js";
+import { createHash, isValidPassword } from "../utils.js";
 
 const router = Router();
 
@@ -129,14 +128,14 @@ router.post("/login", async (req, res) => {
       .status(400)
       .json({ status: "error", error: "Favor de llenar todos los campos" });
 
-  const user = await usersModel.findOne({ email: email });
+  const user = await usersModel.findOne({email });
 
   if (!user)
     return res
       .status(401)
       .render("partials/errors", { error: "Wrong password or username" });
 
-  if (!(await user.isValidPassword(password)))
+  if (!isValidPassword(user, password))
     return res
       .status(401)
       .render("partials/errors", { error: "Wrong password or username" });
