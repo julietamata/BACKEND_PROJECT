@@ -118,7 +118,7 @@ app.use('/api/carts', cartsRouter)
 
 app.use('/mongoose', viewsRouter)
 
-app.use('/api', sessionRouter)
+app.use('/session', sessionRouter)
 
 }catch(err){
     console.log(err.message)

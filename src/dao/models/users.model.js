@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-// import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt'
 
 const userCollection = "users";
 
@@ -12,14 +12,14 @@ const userSchema = new mongoose.Schema({
   role: String 
 });
 
-userSchema.methods.encryptPassword = async password => {
-  const salt = await bcrypt.genSalt(10)
-  return await bcrypt.hash(password, salt)
-}
+// userSchema.methods.encryptPassword = async password => {
+//   const salt = await bcrypt.genSalt(10)
+//   return await bcrypt.hash(password, salt)
+// }
 
- userSchema.methods.isValidPassword = async function(password){
-  return await bcrypt.compare(password, this.password)
-}
+//  userSchema.methods.isValidPassword = async function(password){
+//   return await bcrypt.compare(password, this.password)
+// }
 
 mongoose.set("strictQuery", false);
 

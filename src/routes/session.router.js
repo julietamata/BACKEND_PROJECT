@@ -100,14 +100,14 @@
 // session.router.js
 
 import { Router } from "express";
-import userModel from "../dao/models/users.model.js";
+import usersModel from "../dao/models/users.model.js";
 import bcrypt from "bcrypt";
+import { createHash } from "../utils.js";
+import { isValidPassword } from "../utils.js";
 
 const router = Router();
 
 // contraseñas 
-
-
 
 
 // Ruta de errores
@@ -129,7 +129,7 @@ router.post("/login", async (req, res) => {
       .status(400)
       .json({ status: "error", error: "Favor de llenar todos los campos" });
 
-  const user = await userModel.findOne({ email: email });
+  const user = await usersModel.findOne({ email: email });
 
   if (!user)
     return res
@@ -146,19 +146,14 @@ router.post("/login", async (req, res) => {
 });
 
 // Vista del Registro de usuario
-router.get("/register", (req, res) => {
-  res.render("session/register");
+router.get('/register', (req, res) => {
+  res.render('session/register');
 });
 
 // Vista para hacer registro
-router.post("/register", async (req, res) => {
-  const { first_name, last_name, email, age, password } = req.body;
+router.post('/register', async (req, res) => {
 
-  const createHash = (password) =>
-  bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-
-const isValidPassword = (user, password) =>
-  bcrypt.compareSync(password, user.password);
+const { first_name, last_name, email, age} = req.body
 
 const AuthRol = (req, res, next) => {
   if (req.session?.user) {
@@ -177,20 +172,20 @@ const AuthRol = (req, res, next) => {
   return next();
 };
 
+  const user = {
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    age:req.body.age,
+    password: (createHash(req.body.password)), 
+  };
+
   if (!first_name || !last_name || !email || !age)
     return res
       .status(400)
       .json({ status: "error", message: "error Register" });
 
-  let user = {
-    first_name,
-    last_name,
-    email,
-    age,
-    password: await userModel.createHash(password), // Use encryptPassword method to hash the password
-  };
-
-  const existUser = await userModel.findOne({ email: user.email });
+  const existUser = await usersModel.findOne({ email: user.email });
 
   if (existUser)
     return res.json({
@@ -198,7 +193,8 @@ const AuthRol = (req, res, next) => {
       message: "Ya existe un usuario con ese email",
     });
 
-  await userModel.create(user);
+  (await usersModel.create(user)).save();
+
   res.redirect("/session/login");
 });
 
