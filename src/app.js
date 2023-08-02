@@ -10,7 +10,8 @@ import messageModel from './dao/models/message.model.js'
 import sessionRouter from './routes/session.router.js'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
-
+import passport from 'passport'
+import initializePassport from '../src/config/passport.config.js'
 
 const app = express()
 
@@ -34,7 +35,8 @@ app.use(
     })
   );
   
-
+app.use(passport.initializePassport())
+app.use(passport.session())
 
 
 
