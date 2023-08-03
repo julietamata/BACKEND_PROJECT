@@ -201,6 +201,9 @@ const AuthRol = (req, res, next) => {
 });
 
 
+
+
+
 // Vista para hacer registro con passport
 
 // router.post('/register', passport.authenticate('register', {
@@ -214,6 +217,15 @@ const AuthRol = (req, res, next) => {
 // router.post('/login', passport.authenticate('login', {failureRedirect: '/partials/errors'}), async (req, res) => {
 //   res.redirect('/mongoose/products')
 // })
+
+
+// Ruta con github
+
+router.get('/github',
+  passport.authenticate('github', {scope: ['user:email']}),
+  async(req,res) => {}
+  )
+
 
 
 // Ruta de errores
