@@ -111,94 +111,91 @@ const router = Router();
 // contraseñas 
 
 
-// Ruta de errores
-router.get("/error", (req, res) => {
-  res.render("partials/errors");
-});
+
 
 // Vista de Login
 router.get("/login", (req, res) => {
   res.render("session/login");
 });
 
-// Ruta para hacer login
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+// // Ruta para hacer login
+// router.post("/login", async (req, res) => {
+//   const { email, password } = req.body;
 
-  if (!email || !password)
-    return res
-      .status(400)
-      .json({ status: "error", error: "Favor de llenar todos los campos" });
+//   if (!email || !password)
+//     return res
+//       .status(400)
+//       .json({ status: "error", error: "Favor de llenar todos los campos" });
 
-  const user = await usersModel.findOne({email });
+//   const user = await usersModel.findOne({email });
 
-  if (!user)
-    return res
-      .status(401)
-      .render("partials/errors", { error: "Wrong password or username" });
+//   if (!user)
+//     return res
+//       .status(401)
+//       .render("partials/errors", { error: "Wrong password or username" });
 
-  if (!isValidPassword(user, password))
-    return res
-      .status(401)
-      .render("partials/errors", { error: "Wrong password or username" });
+//   if (!isValidPassword(user, password))
+//     return res
+//       .status(401)
+//       .render("partials/errors", { error: "Wrong password or username" });
 
-  req.session.user = user;
-  res.redirect("/mongoose/products");
-});
+//   req.session.user = user;
+//   res.redirect("/mongoose/products");
+// });
 
 // Vista del Registro de usuario
 router.get('/register', (req, res) => {
   res.render('session/register');
 });
 
-//Vista para hacer registro
+// //Vista para hacer registro
 
-router.post('/register', async (req, res) => {
+// router.post('/register', async (req, res) => {
 
-const { first_name, last_name, email, age} = req.body
+// const { first_name, last_name, email, age} = req.body
 
-const AuthRol = (req, res, next) => {
-  if (req.session?.user) {
-    if (
-      req.session.user.email === "adminCoder@coder.com" &&
-      bcrypt.compareSync("adminCod3r123", req.session.user.password)
-    ) {
-      req.session.user.role = "Admin";
-      delete req.session.user.password;
-      return next();
-    }
-    req.session.user.role = "User";
-    delete req.session.user.password;
-    return next();
-  }
-  return next();
-};
+// const AuthRol = (req, res, next) => {
+//   if (req.session?.user) {
+//     if (
+//       req.session.user.email === "adminCoder@coder.com" &&
+//       bcrypt.compareSync("adminCod3r123", req.session.user.password)
+//     ) {
+//       req.session.user.role = "Admin";
+//       delete req.session.user.password;
+//       return next();
+//     }
+//     req.session.user.role = "User";
+//     delete req.session.user.password;
+//     return next();
+//   }
+//   return next();
+// };
 
-  const user = {
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    age:req.body.age,
-    password: (createHash(req.body.password)), 
-  };
+//   const user = {
+//     first_name: req.body.first_name,
+//     last_name: req.body.last_name,
+//     email: req.body.email,
+//     age:req.body.age,
+//     password: (createHash(req.body.password)), 
+//   };
 
-  if (!first_name || !last_name || !email || !age)
-    return res
-      .status(400)
-      .json({ status: "error", message: "error Register" });
+//   if (!first_name || !last_name || !email || !age)
+//     return res
+//       .status(400)
+//       .json({ status: "error", message: "error Register" });
 
-  const existUser = await usersModel.findOne({ email: user.email });
+//   const existUser = await usersModel.findOne({ email: user.email });
 
-  if (existUser)
-    return res.json({
-      status: "error",
-      message: "Ya existe un usuario con ese email",
-    });
+//   if (existUser)
+//     return res.json({
+//       status: "error",
+//       message: "Ya existe un usuario con ese email",
+//     });
 
-  (await usersModel.create(user)).save();
+//   (await usersModel.create(user)).save();
 
-  res.redirect("/session/login");
-});
+//   res.redirect("/session/login");
+// });
 
 
 
@@ -206,17 +203,17 @@ const AuthRol = (req, res, next) => {
 
 // Vista para hacer registro con passport
 
-// router.post('/register', passport.authenticate('register', {
-//   failureRedirect: '/partials/errors'
-// }), async (req, res) => {
-//   res.redirect('/session/login');
-// });
+router.post('/register', passport.authenticate('register', {
+  failureRedirect: 'session/error'
+}), async (req, res) => {
+  res.redirect('/session/login');
+});
 
 
 
-// router.post('/login', passport.authenticate('login', {failureRedirect: '/partials/errors'}), async (req, res) => {
-//   res.redirect('/mongoose/products')
-// })
+router.post('/login', passport.authenticate('login', {failureRedirect: 'session/error'}), async (req, res) => {
+  res.redirect('/mongoose/products')
+})
 
 
 // Ruta con github
@@ -226,19 +223,36 @@ router.get('/github',
   async(req,res) => {}
   )
 
+ // Ruta callback github
+ 
+ router.get('/githubcallback',
+  passport.authenticate('github',{failureRedirect: '/login'}),
+  async(req,res) => {
+    console.log('Callback: ', req.user)
+    req.session.user = req.user
+    console.log('User session:', req.session.user)
+    res.redirect('/')
+  }
+  )
 
 
 // Ruta de errores
 router.get("/error", (req, res) => {
-  res.render("partials/errors");
+  res.render("session/error");
 });
+
+
+// // Ruta de errores
+// router.get("/error", (req, res) => {
+//   res.render("partials/errors");
+// });
 
 // Vista para hacer logout
 router.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.log(err);
-      res.status(500).render("partials/error", { error: err });
+      res.status(500).render("session/error", { error: err });
     } else res.redirect("/session/login");
   });
 });

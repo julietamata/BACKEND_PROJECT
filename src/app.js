@@ -36,7 +36,7 @@ app.use(
   );
   
 initializePassport()  
-app.use(passport.initializePassport())
+app.use(passport.initialize())
 app.use(passport.session())
 
 

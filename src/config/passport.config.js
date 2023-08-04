@@ -16,7 +16,7 @@ const initializePassport = () => {
     }, async(req, username, password, done) => {
         const { first_name, last_name, email, age } = req.body
         try {
-            const user = await UserModel.findOne({ email: username })
+            const user = await usersModel.findOne({ email: username })
             if (user) {
                 console.log('User already exists')
                 return done(null, false)
@@ -25,7 +25,7 @@ const initializePassport = () => {
             const newUser = {
                 first_name, last_name, email, age, password: createHash(password)
             }
-            const result = await UserModel.create(newUser)
+            const result = await usersModel.create(newUser)
             return done(null, result)
         } catch(err) {
             return done('error al obtener el user')
@@ -37,9 +37,22 @@ const initializePassport = () => {
     passport.use('github', new GitHubStrategy({
         clientID: 'Iv1.c84585be45f2ebf4',
         clientSecret: '7bdb7503881ee95f7d91de95e7483fd26202a847',
-        callbackURL: 'http://localhost:8080/api/session/githubcallback'
+        callbackURL: 'http://localhost:8080/session/githubcallback'
     }, async(accessToken, refreshToken, profile, done) => {
         console.log(profile)
+        try{
+            const user = await usersModel.findOne({ email: profile._json.email })
+            if (user) return done(null, user)
+            const newUser = await usersModel.create({
+                first_name: profile._json.name,
+                last_name: "",
+                email: profile._json.email,
+                password: ""
+            })
+            return done(null, newUser)
+        } catch(err){
+            return done( `Error to login with Github => ${err.messsage} `)
+        }
     }
     ))
 
