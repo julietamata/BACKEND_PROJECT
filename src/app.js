@@ -12,6 +12,8 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import initializePassport from '../src/config/passport.config.js'
+import cookieParser from 'cookie-parser'
+
 
 const app = express()
 
@@ -19,6 +21,7 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 const products = new ProductManager();
+app.use(cookieParser('secret'))
 
 
 

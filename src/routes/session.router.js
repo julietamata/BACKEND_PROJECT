@@ -42,11 +42,16 @@ router.get('/register', (req, res) => {
 //       .render("partials/errors", { error: "Wrong password or username" });
 
 //   req.session.user = user;
+
+    
+    // const access_token = generateToken(user)
+    // res.send({status: 'success', access_token})
+
 //   res.redirect("/mongoose/products");
 // });
 
 
-// //Vista para hacer registro
+// //Vista para hacer registro y con jwt
 
 // router.post('/register', async (req, res) => {
 
@@ -92,7 +97,12 @@ router.get('/register', (req, res) => {
 
 //   (await usersModel.create(user)).save();
 
+    // const access_token = generateToken(user)
+    // res.send({status: 'success', access_token})
+
 //   res.redirect("/session/login");
+
+
 // });
 
 //** **
@@ -116,18 +126,18 @@ router.post('/login', passport.authenticate('login', {failureRedirect: 'session/
 
 router.get('/github',
   passport.authenticate('github', {scope: ['user:email']}),
-  async(req,res) => {}
-  )
+  async(req, res) => {}
+  );
 
  // Ruta callback github
  
  router.get('/githubcallback',
-  passport.authenticate('github',{failureRedirect: '/login'}),
+  passport.authenticate('github',{failureRedirect: 'session/login'}),
   async(req,res) => {
     console.log('Callback: ', req.user)
     req.session.user = req.user
     console.log('User session:', req.session.user)
-    res.redirect('/')
+    res.redirect('/mongoose/products')
   }
   )
 

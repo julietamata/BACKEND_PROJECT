@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   age: { type: Number, required: true },
   password: { type: String, required: true },
-  role: String 
+  role: {type: String} 
 });
 
 // userSchema.methods.encryptPassword = async password => {
