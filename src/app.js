@@ -13,6 +13,7 @@ import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import initializePassport from '../src/config/passport.config.js'
 import cookieParser from 'cookie-parser'
+import { handlePolicies, passportCall } from './utils.js'
 
 
 const app = express()
@@ -122,7 +123,7 @@ app.use('/api/products', productsRouter)
 
 app.use('/api/carts', cartsRouter)
 
-app.use('/mongoose', viewsRouter)
+app.use('/mongoose', passportCall('login'), viewsRouter)
 
 app.use('/session', sessionRouter)
 

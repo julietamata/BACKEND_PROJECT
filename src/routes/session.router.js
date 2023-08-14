@@ -111,13 +111,13 @@ router.get('/register', (req, res) => {
 // Vista para hacer registro con passport ** Ocultar para desafío de login **
 
 router.post('/register', passport.authenticate('register', {
-  failureRedirect: 'session/error'
+  failureRedirect: 'partials/errors'
 }), async (req, res) => {
   res.redirect('/session/login');
 });
 
 
-router.post('/login', passport.authenticate('login', {failureRedirect: 'session/error'}), async (req, res) => {
+router.post('/login', passport.authenticate('login', {failureRedirect: 'partials/errors'}), async (req, res) => {
   res.redirect('/mongoose/products')
 })
 
@@ -144,7 +144,7 @@ router.get('/github',
 
 // Ruta de errores
 router.get("/error", (req, res) => {
-  res.render("session/error");
+  res.render('partials/errors');
 });
 
 
@@ -158,9 +158,14 @@ router.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.log(err);
-      res.status(500).render("session/error", { error: err });
+      res.status(500).render('partials/errors', { error: err });
     } else res.redirect("/session/login");
   });
 });
+
+router.get('/current', (req, res) => {
+  if(!req.session.user) return res.status(401).json({status: 'error', error: 'Favor de iniciar sesión'})
+  res.status(200).json({status: 'success', payload: req.session.user})
+})
 
 export default router;

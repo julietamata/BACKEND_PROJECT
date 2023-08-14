@@ -11,6 +11,33 @@ export const isValidPassword = (user, password) => {
 
 
 
+export const passportCall = strategy => {
+    return async(req, res, next) => {
+        passport.authenticate(strategy, function(err, user, info) {
+            if (err) return next(err)
+            if (!user) return res.status(401).render('partials/errors', { error: info.messages ? info.messages : info.toString() })
+            
+            req.user = user
+            next()
+        })(req, res, next)
+    }
+}
+
+export const handlePolicies = policies => (req, res, next) => {
+    const user = req.user || null
+    console.log('handlePolicies: ', user)
+    if (policies.includes('ADMIN')) {
+        if (user.role !== 'admin') {
+            return res.status(403).render('partials/errors', {
+                error: 'Please log in with your admin credentials'
+            })
+        }
+    }
+    return next()
+}
+
+
+
 
 // export const generateToken = user => {
 //     const token = Jwt.sign({user}, 'secret', { expiresIn: '24h'})

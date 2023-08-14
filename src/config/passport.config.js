@@ -3,6 +3,7 @@ import local from "passport-local";
 import usersModel from "../dao/models/users.model.js";
 import { isValidPassword, createHash } from "../utils.js";
 import GitHubStrategy from 'passport-github2'
+import cartsModel from "../dao/models/carts.model.js";
 // import jwt from "passport-jwt"
 
 
@@ -29,9 +30,10 @@ const initializePassport = () => {
                 console.log('User already exists')
                 return done(null, false)
             }
-
+            const cartForNewUser = await cartsModel.create({})
             const newUser = {
-                first_name, last_name, email, age, password: createHash(password)
+                first_name, last_name, email, age, password: createHash(password), cart: cartForNewUser._id,
+                role: (email === 'adminCoder@coder.com') ? 'admin' :'user'
             }
             const result = await usersModel.create(newUser)
             return done(null, result)
@@ -91,7 +93,7 @@ const initializePassport = () => {
                 password: ""
             });
     
-            // Guardar el usuario sin validación utilizando Promesas
+        
             newUser.save({ validateBeforeSave: false })
                 .then(savedUser => {
                     return done(null, savedUser);
