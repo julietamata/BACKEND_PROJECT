@@ -117,8 +117,9 @@ router.post('/register', passport.authenticate('register', {
 });
 
 
-router.post('/login', passport.authenticate('login', {failureRedirect: 'partials/errors'}), async (req, res) => {
+router.post('/login', passport.authenticate('login', {failureRedirect: 'session/login'}), async (req, res) => {
   res.redirect('/mongoose/products')
+  console.log(req.user);
 })
 
 

@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import passport from 'passport'
 // import { Jwt } from 'jsonwebtoken'
 
 export const createHash = password => {
@@ -11,17 +12,17 @@ export const isValidPassword = (user, password) => {
 
 
 
-export const passportCall = strategy => {
-    return async(req, res, next) => {
-        passport.authenticate(strategy, function(err, user, info) {
-            if (err) return next(err)
-            if (!user) return res.status(401).render('partials/errors', { error: info.messages ? info.messages : info.toString() })
+// export const passportCall = strategy => {
+//     return async(req, res, next) => {
+//         passport.authenticate(strategy, function(err, user, info) {
+//             if (err) return next(err)
+//             if (!user) return res.status(401).render('partials/errors', { error: 'Unauthorized' })
             
-            req.user = user
-            next()
-        })(req, res, next)
-    }
-}
+//             req.user = user
+//             next()
+//         })(req, res, next)
+//     }
+// }
 
 export const handlePolicies = policies => (req, res, next) => {
     const user = req.user || null

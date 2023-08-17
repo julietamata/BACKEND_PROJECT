@@ -2,6 +2,8 @@ import { Router } from "express";
 import messageModel from "../dao/models/message.model.js";
 import productsModel from "../dao/models/products.model.js";
 import cartsModel from "../dao/models/carts.model.js";
+// import { passportCall } from "../utils.js";
+import UserModel from "../dao/models/users.model.js";
 
 const router = Router()
 
@@ -10,6 +12,8 @@ const router = Router()
 
 
 router.get("/products", async (req, res) => {
+
+  
   try {
     let page = parseInt(req.query.page) || 1
     let limit = parseInt(req.query.limit) || 4
@@ -37,6 +41,8 @@ router.get("/products", async (req, res) => {
                                             : ''
     //  const products = await result.find().lean().exec()
     console.log(result)
+
+    // const user = await UserModel.findById(req.session?.passport?.user).lean().exec();
 
     res.render('home', {
       
