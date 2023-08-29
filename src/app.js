@@ -14,7 +14,14 @@ import passport from 'passport'
 import initializePassport from '../src/config/passport.config.js'
 import cookieParser from 'cookie-parser'
 import { handlePolicies } from './utils.js'
+import dotenv from 'dotenv'
+import config from './config/config.js'
 
+// export const PORT = config.apiserver.port
+
+const port = config.port
+const uri = config.uri
+const dbname = config.dbname
 
 const app = express()
 
@@ -29,8 +36,8 @@ app.use(cookieParser('secret'))
 app.use(
     session({
       store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://Alduin:alduin@cluster0.tq1ixbp.mongodb.net/ecommerce',
-        dbName: "ecommerce",
+        mongoUrl: uri,
+        dbName: dbname,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
       }),
       secret: "secretPass",
@@ -70,7 +77,7 @@ try {
     {useUnifiedTopology: true}
     )
     console.log('Se ha realizado una conexion')
-    const server = app.listen(8080, () => console.log('Server up'))
+    const server = app.listen(port, () => console.log('Server up'))
     const io = new Server(server)
     app.use((req, res, next) => {
         req.io = io

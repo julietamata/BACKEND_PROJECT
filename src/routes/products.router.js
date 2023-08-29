@@ -1,6 +1,11 @@
 import { Router } from "express";
 import ProductManager from "../dao/fsManagers/ProductManager.js";
 import productModel from "../dao/models/products.model.js";
+import {getProductsController, 
+		getProductByIdController,
+		createProductController,
+		updateProductController,
+		deleteProductController} from '../controllers/product.controller.js'
 
 
 const router = Router()
@@ -65,79 +70,15 @@ const product = new ProductManager();
 //endpoints mongoose data onwire
 
 
-router.get('/mongoose', async (req, res) => {
-	try{
-		const limit = req.query.limit || 10
-		const result = await productModel.find().limit(limit).lean().exec()
-		res.status(201).json({status: 'success', payload:result})
-		
-	} catch(err) {
-		res.status(500).json({status: 'error', error: 'No hay products'})
-	}
-})
+router.get('/mongoose', getProductsController)
 
+router.get('/mongoose/:pid', getProductByIdController)
 
-router.get('/mongoose/:pid', async (req, res) => {
-	try{
-		const id = req.params.pid
-		const result = await productModel.findById(id).lean().exec()
-		if (result === null) { 
-		res.status(500).json({status: 'error', error: err.message})
-		}
-		res.status(201).json({status: 'success', payload:result})
-		
-	} catch(err) {
-		res.status(500).json({status: 'error', error: err.message})
-	}
-})
+router.post('/mongoose', createProductController) 
 
+router.put('/moongose/:pid', updateProductController)
 
-
-router.post('/mongoose', async (req, res) => {
-    const product = req.body
-    try{
-        const result = await productModel.create(product)
-		const products = await productModel.find().lean().exec()
-		req.io.emit('updatedProducts', products)
-    res.status(201).json({status: 'success', payload: result})
-
-    }catch(err){
-        res.status(500).json({status:'error', error: err.message})
-    }
-}) 
-
-router.put('/moongose/:pid', async (req, res) => {
-	try{
-		const id = req.params.pid
-		const data = req.body
-		const result = await productModel.findByIdAndUpdate(id, data, {returnDocument: 'after'})
-		if (result === null){
-			res.status(500).json({status:'error', error: err.message})
-		}
-		const products = await productModel.find().lean().exec()
-		req.io.emit('updatedProducts', products)
-		res.status(201).json({status: 'success', payload: result})
-	} catch(err){
-		res.status(500).json({status:'error', error: err.message})
-	}
-})
-
-
-router.delete('/moongose/:pid', async (req, res) => {
-	try{
-		const id = req.params.pid
-		const result = await productModel.findByIdAndDelete(id)
-		if (result === null){
-			res.status(500).json({status:'error', error: err.message})
-		}
-		const products = await productModel.find().lean().exec()
-		req.io.emit('updatedProducts', products)
-		res.status(201).json({status: 'success', payload: products})
-
-	}catch(err) {
-		res.status(500).json({status:'error', error: err.message})
-	}
-})
+router.delete('/moongose/:pid', deleteProductController)
 
 
 
