@@ -5,7 +5,6 @@ import cartsModel from "../dao/models/carts.model.js";
 // import { passportCall } from "../utils.js";
 import UserModel from "../dao/models/users.model.js";
 
-const router = Router()
 
 
    // Vistas productos render
@@ -97,4 +96,3 @@ export const viewsCartController = async(req, res) => {
   }
   
 
-  export default router
