@@ -65,6 +65,10 @@ export const getCartsByIdController = async(req, res) => {
 	}
 }
 
+export const getCartsByIdControllertwo = async(req, res) =>{
+	
+}
+
 // Ruta para crear un carrito 
 export const createCartController = async (req, res) => {
 	try {
