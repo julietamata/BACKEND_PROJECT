@@ -1,6 +1,18 @@
 import CartManager from "../dao/fsManagers/CartManager.js";
 import cartsModel from "../dao/models/carts.model.js";
 import productModel from "../dao/models/products.model.js";
+import { CartService, ProductService } from "../services/index.js";
+import config from "../config/config.js";
+import Mailgen from "mailgen";
+import twilio from 'twilio'
+import nodemailer from 'nodemailer'
+
+const nodemailuser = config.nodemailuser
+const nodemailpass = config.nodemailpass
+const accountSid = config.twiliosid
+const authToken = config.twiliotoken
+const twiliophone = config.twiliophone    
+
 
 const carts = new CartManager
 
@@ -42,7 +54,8 @@ const carts = new CartManager
 
 export const getCartsController = async(req, res) => {
     try{
-		const result = await cartsModel.find().lean().exec()
+		// const result = await cartsModel.find().lean().exec()
+		const result = await CartService.getAll()
 		res.status(201).json({status: 'success', payload:result})
 		console.log(result)
 	} catch(err) {
@@ -54,7 +67,9 @@ export const getCartsController = async(req, res) => {
 export const getCartsByIdController = async(req, res) => {
     try{
 		const cartId = req.params.cid
-		const result = await cartsModel.findById(cartId).lean().exec()
+		// const result = await cartsModel.findById(cartId).lean().exec()
+		const result = await CartService.getById()
+
 		if (result === null) { 
 		res.status(500).json({status: 'error', error: err.message})
 		}
@@ -65,15 +80,13 @@ export const getCartsByIdController = async(req, res) => {
 	}
 }
 
-export const getCartsByIdControllertwo = async(req, res) =>{
-	
-}
-
 // Ruta para crear un carrito 
 export const createCartController = async (req, res) => {
 	try {
 		const cart = req.body;
-		const addCart = await cartsModel.create(cart);
+		// const addCart = await cartsModel.create(cart);
+		const addCart = await CartService.create()
+
 		res.json({ status: "success", payload: addCart });
 	  } catch (error) {
 		console.log(error);
@@ -87,12 +100,16 @@ export const addProductsToCartController = async (req, res) => {
 		const productId = req.params.pid
 		const cartId = req.params.cid
 	
-		const product = await productModel.findById(productId);
+		// const product = await productModel.findById(productId);
+		const product = await ProductService.getById(productId)
+
 		
 		if (!product) {
 		  return res.status(404).json({ error: "El producto no existe" });
 		}
-		const cart = await cartsModel.findById(cartId);
+		// const cart = await cartsModel.findById(cartId);
+		const cart = await CartService.getById(cartId)
+
 		if (!cart) {
 		  return res.status(404).json({ error: "El carrito no existe" });
 		}
@@ -125,7 +142,8 @@ export const deleteProductOfCartController = async (req, res) => {
 		const cid = req.params.cid;
 		const pid = req.params.pid;
 		
-		const result = await cartsModel.findByIdAndUpdate(
+		// const result = await cartsModel.findByIdAndUpdate
+		const result = await CartService.update(
 		  cid,
 		  { $pull: { products: { product: pid } } },
 		  { new: true }
@@ -143,7 +161,9 @@ export const deleteProductOfCartController = async (req, res) => {
 export const deleteCartController = async (req, res) => {
 	try{
 		const cid = req.params.cid
-		const result = await cartsModel.findByIdAndDelete(cid).lean().exec()
+		// const result = await cartsModel.findByIdAndDelete(cid).lean().exec()
+		const result = await CartService.delete(cid)
+
 		if (result === null){
 			res.status(500).json({status:'error', error: err.message})
 		}
@@ -160,7 +180,9 @@ export const updateCartController = async (req, res) => {
 		const productsArray = req.body.products;
 	
 		// Verifica si el carrito existe
-		const cart = await cartsModel.findById(cid);
+		// const cart = await cartsModel.findById(cid);
+		const cart = await CartService.getById(cid)
+
 		if (!cart) {
 		  return res.status(404).json({ error: "El carrito no existe" });
 		}
@@ -168,7 +190,9 @@ export const updateCartController = async (req, res) => {
 		// Verifica si los productos en el arreglo son válidos
 		const invalidProducts = [];
 		for (const productId of productsArray) {
-		  const product = await productModel.findById(productId);
+		//   const product = await productModel.findById(productId);
+		  const product = await ProductService.getById(productId)
+
 		  if (!product) {
 			invalidProducts.push(productId);
 		  }
@@ -202,7 +226,9 @@ export const updateQuantityProductCartController = async (req, res) => {
 		const { quantity } = req.body;
 	
 		// Verifica si el carrito existe
-		const cart = await cartsModel.findById(cid);
+		// const cart = await cartsModel.findById(cid);
+		const cart = await CartService.getById(cid)
+
 		if (!cart) {
 		  return res.status(404).json({ error: "El carrito no existe" });
 		}
@@ -227,3 +253,60 @@ export const updateQuantityProductCartController = async (req, res) => {
 	  }
 }
 
+// Ruta para mandar el ticket
+
+export const getbill = (req, res) => {
+    let config = {
+        service: 'gmail',
+        auth: {
+            user: nodemailuser,
+            pass: nodemailpass
+        }
+    }
+    let transporter = nodemailer.createTransport(config)
+    let Mailgenerator = new Mailgen({
+        theme: 'default',
+        product: {
+            name: 'Ticket de compra',
+            link: 'http://localhost'
+        }
+    })
+
+    let content = {
+        body: {
+            intro: 'Tu ticket de compra',
+            table: {
+                data: [
+                    {
+                        item: 'Zapatos colección love-hate',
+                        description: 'Pronto recibirás tu pedido!',
+                        price: '$800'
+                    }
+                ]
+            },
+            outro: 'Gracias por tu compra'
+        }
+    }
+    let mail = Mailgenerator.generate(content)
+
+    let message = {
+        from: nodemailuser,
+        to: req.body.useremail,
+        subject: 'Gracias por tu compra',
+        html: mail
+    }
+    transporter.sendMail(message)
+        .then(() => res.status(201).json({ status: 'success' }))
+        .catch(err => res.status(500).json({ err }))
+}
+
+export const sendSMS = (req, res) => {
+    const client = twilio(accountSid, authToken)
+    client.messages
+        .create({
+            body: 'Buenos días alegría, buenos días señor sol',
+            from: twiliophone,
+            to: '+523787096987'
+        })
+        .then(message => res.send(message.sid));
+}

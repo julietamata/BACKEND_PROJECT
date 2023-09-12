@@ -16,6 +16,7 @@ import cookieParser from 'cookie-parser'
 import { handlePolicies } from './utils.js'
 import dotenv from 'dotenv'
 import config from './config/config.js'
+import cors from 'cors'
 
 // export const PORT = config.apiserver.port
 
@@ -121,6 +122,10 @@ app.get('/realtimeproducts', async (req, res) => {
 
 
 //middleware
+
+//para servidores externos
+app.use(cors())
+
 app.use(express.static('./src/public'))
 
 app.get('/', (req, res) => res.status(201).send({message: 'server ok'}))

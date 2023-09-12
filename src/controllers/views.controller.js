@@ -4,6 +4,7 @@ import productsModel from "../dao/models/products.model.js";
 import cartsModel from "../dao/models/carts.model.js";
 // import { passportCall } from "../utils.js";
 import UserModel from "../dao/models/users.model.js";
+import { CartService, MessageService, ProductService } from "../services/index.js";
 
 
 
@@ -13,8 +14,6 @@ export const getViewsProductsController = async(req, res) => {
     try {
         let page = parseInt(req.query.page) || 1
         let limit = parseInt(req.query.limit) || 4
-    
-    
         
         const filterOptions = {}
         
@@ -28,7 +27,9 @@ export const getViewsProductsController = async(req, res) => {
     
         if (req.query.sort === 'desc') paginateOptions.sort = { price: -1}
     
-        const result = await productsModel.paginate(filterOptions, paginateOptions)
+        // const result = await productsModel.paginate(filterOptions, paginateOptions)
+        const result = await ProductService.getAllPaginate(filterOptions, paginateOptions)
+
         // const result = await productsModel.paginate({}, { page, limit, lean: true})
     
         result.prevLink = result.hasPrevPage ? `/mongoose/products?page=${result.prevPage}`
@@ -60,7 +61,9 @@ export const getViewsProductsController = async(req, res) => {
 
 export const viewsRealTimeProductsController = async(req, res) => {
     try {
-        const products = await productsModel.find().lean().exec()
+        // const products = await productsModel.find().lean().exec()
+        const products = await ProductService.getAll()
+
         res.render('realTimeProducts', { products })
       } catch (error) {
         console.log(error);
@@ -71,7 +74,9 @@ export const viewsRealTimeProductsController = async(req, res) => {
   // Vista del chat
 export const viewsChatController = async(req, res) => {
     try {
-        const messages = await messageModel.find().lean().exec();
+        // const messages = await messageModel.find().lean().exec();
+        const messages = await MessageService.getAll()
+
         res.render("chat", { messages });
       } catch (error) {
         console.log(error);
@@ -83,7 +88,9 @@ export const viewsChatController = async(req, res) => {
 export const viewsCartController = async(req, res) => {
     try{
         const cid = req.params.cid
-        const result = await cartsModel.findById(cid).populate('products.product').lean().exec();
+        // const result = await cartsModel.findById(cid).populate('products.product').lean().exec();
+        const result = await CartService.getById(cid).populate('products.product')
+
         if (result === null) {
           
           return res.status(404).json({status: 'error', error: 'El carrito no existe'})

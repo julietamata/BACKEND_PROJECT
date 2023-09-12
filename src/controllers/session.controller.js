@@ -156,3 +156,7 @@ export const currentController = async (req, res) => {
    console.log(req.session)
 };
 
+export const currentViewController = (req, res) => {
+    const user = new UserDTO(req.user.user)
+    res.render("session/current", { user })
+  }

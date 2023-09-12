@@ -10,7 +10,10 @@ import {getCartsController,
         deleteProductOfCartController, 
         deleteCartController, 
         updateCartController, 
-        updateQuantityProductCartController} from "../controllers/cart.controller.js"
+        updateQuantityProductCartController,
+        getbill,
+        sendSMS 
+        } from "../controllers/cart.controller.js"
 
 const router = Router()
 const carts = new CartManager
@@ -71,6 +74,10 @@ router.delete("/mongoose/:cid", deleteCartController)
 router.put("/mongoose/:cid", updateCartController);
 
 router.put("/mongoose/:cid/product/:pid", updateQuantityProductCartController);
+
+router.post("/mongoose/sendticket", getbill);
+
+router.post("/mongoose/sendorder", sendSMS);
 
 
 export default router

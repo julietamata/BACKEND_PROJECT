@@ -1,5 +1,6 @@
 import ProductManager from "../dao/fsManagers/ProductManager.js";
 import productModel from "../dao/models/products.model.js";
+import { ProductService } from "../services/index.js";
 
 const product = new ProductManager();
 
@@ -63,7 +64,8 @@ const product = new ProductManager();
 export const getProductsController = async (req, res) => {
     try{
 		const limit = req.query.limit || 10
-		const result = await productModel.find().limit(limit).lean().exec()
+		// const result = await productModel.find().limit(limit).lean().exec()
+		const result = await ProductService.getAll()
 		res.status(201).json({status: 'success', payload:result})
 		
 	} catch(err) {
@@ -76,7 +78,8 @@ export const getProductsController = async (req, res) => {
 export const getProductByIdController = async (req, res) => {
     try{
 		const id = req.params.pid
-		const result = await productModel.findById(id).lean().exec()
+		// const result = await productModel.findById(id).lean().exec()
+		const result = await ProductService.getById(id)
 		if (result === null) { 
 		res.status(500).json({status: 'error', error: err.message})
 		}
@@ -92,8 +95,10 @@ export const getProductByIdController = async (req, res) => {
 export const createProductController = async (req, res) => {
     const product = req.body
     try{
-        const result = await productModel.create(product)
-		const products = await productModel.find().lean().exec()
+        // const result = await productModel.create(product)
+		const result = await ProductService.create(product)
+		// const products = await productModel.find().lean().exec()
+		const products = await ProductService.getAll()
 		req.io.emit('updatedProducts', products)
     res.status(201).json({status: 'success', payload: result})
 
@@ -108,11 +113,13 @@ export const updateProductController = async (req, res) => {
     try{
 		const id = req.params.pid
 		const data = req.body
-		const result = await productModel.findByIdAndUpdate(id, data, {returnDocument: 'after'})
+		// const result = await productModel.findByIdAndUpdate(id, data, {returnDocument: 'after'})
+		const result = await ProductService.update(id, data)	
 		if (result === null){
 			res.status(500).json({status:'error', error: err.message})
 		}
-		const products = await productModel.find().lean().exec()
+		// const products = await productModel.find().lean().exec()
+		const products = await ProductService.getAll()
 		req.io.emit('updatedProducts', products)
 		res.status(201).json({status: 'success', payload: result})
 	} catch(err){
@@ -125,11 +132,13 @@ export const updateProductController = async (req, res) => {
 export const deleteProductController = async (req, res) => {
     try{
 		const id = req.params.pid
-		const result = await productModel.findByIdAndDelete(id)
+		// const result = await productModel.findByIdAndDelete(id)
+		const result = await ProductService.delete(id)
 		if (result === null){
 			res.status(500).json({status:'error', error: err.message})
 		}
-		const products = await productModel.find().lean().exec()
+		// const products = await productModel.find().lean().exec()
+		const products = await ProductService.getAll()
 		req.io.emit('updatedProducts', products)
 		res.status(201).json({status: 'success', payload: products})
 
