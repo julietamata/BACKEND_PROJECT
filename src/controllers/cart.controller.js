@@ -304,7 +304,7 @@ export const sendSMS = (req, res) => {
     const client = twilio(accountSid, authToken)
     client.messages
         .create({
-            body: 'Buenos días alegría, buenos días señor sol',
+            body: 'Gracias, tu solicitud de compra ha sido aprobada',
             from: twiliophone,
             to: '+523787096987'
         })

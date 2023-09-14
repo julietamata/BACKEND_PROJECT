@@ -8,7 +8,7 @@ import {getViewsProductsController,
         viewsRealTimeProductsController, 
         viewsChatController,
         viewsCartController} from "../controllers/views.controller.js"
-
+import { handlePolicies } from "../middleware/auth.middleware.js";
 
 
 const router = Router()
@@ -17,7 +17,7 @@ router.get("/products", getViewsProductsController)
   
 router.get("/realtimeproducts", viewsRealTimeProductsController)
 
-router.get("/chat", viewsChatController);
+router.get("/chat", handlePolicies(["ADMIN", "USER"]),  viewsChatController);
 
 router.get("/carts/:cid", viewsCartController)
 

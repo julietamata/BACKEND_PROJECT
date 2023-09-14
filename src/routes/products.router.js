@@ -6,7 +6,7 @@ import {getProductsController,
 		createProductController,
 		updateProductController,
 		deleteProductController} from '../controllers/product.controller.js'
-
+import { handlePolicies } from "../middleware/auth.middleware.js";
 
 const router = Router()
 
@@ -74,11 +74,11 @@ router.get('/mongoose', getProductsController)
 
 router.get('/mongoose/:pid', getProductByIdController)
 
-router.post('/mongoose', createProductController) 
+router.post('/mongoose', handlePolicies(["ADMIN"]), createProductController) 
 
-router.put('/moongose/:pid', updateProductController)
+router.put('/moongose/:pid', handlePolicies(["ADMIN"]), updateProductController)
 
-router.delete('/moongose/:pid', deleteProductController)
+router.delete('/moongose/:pid', handlePolicies(["ADMIN"]), deleteProductController)
 
 
 

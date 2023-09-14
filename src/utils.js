@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import passport from 'passport'
-// import { Jwt } from 'jsonwebtoken'
+import { Jwt } from 'jsonwebtoken'
 
 export const createHash = password => {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
@@ -24,26 +24,26 @@ export const isValidPassword = (user, password) => {
 //     }
 // }
 
-export const handlePolicies = policies => (req, res, next) => {
-    const user = req.user || null
-    console.log('handlePolicies: ', user)
-    if (policies.includes('ADMIN')) {
-        if (user.role !== 'admin') {
-            return res.status(403).render('partials/errors', {
-                error: 'Please log in with your admin credentials'
-            })
-        }
-    }
-    return next()
-}
-
-
-
-
-// export const generateToken = user => {
-//     const token = Jwt.sign({user}, 'secret', { expiresIn: '24h'})
-//     return token
+// export const handlePolicies = policies => (req, res, next) => {
+//     const user = req.user || null
+//     console.log('handlePolicies: ', user)
+//     if (policies.includes('ADMIN')) {
+//         if (user.role !== 'admin') {
+//             return res.status(403).render('partials/errors', {
+//                 error: 'Please log in with your admin credentials'
+//             })
+//         }
+//     }
+//     return next()
 // }
+
+
+
+
+export const generateToken = user => {
+    const token = Jwt.sign({user}, 'secret', { expiresIn: '24h'})
+    return token
+}
 
 // export const authToken = (req, res, next) => {
 //     const token = req.headers.auth

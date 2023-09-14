@@ -14,6 +14,7 @@ import {getCartsController,
         getbill,
         sendSMS 
         } from "../controllers/cart.controller.js"
+import { handlePolicies } from "../middleware/auth.middleware.js";
 
 const router = Router()
 const carts = new CartManager
@@ -65,7 +66,7 @@ router.get('/mongoose/:cid', getCartsByIdController)
 
 router.post("/mongoose", createCartController);
 
-router.post("/mongoose/:cid/product/:pid", addProductsToCartController);
+router.post("/mongoose/:cid/product/:pid", handlePolicies(["USER"]),addProductsToCartController);
 
 router.delete("/mongoose/:cid/product/:pid", deleteProductOfCartController);
 
