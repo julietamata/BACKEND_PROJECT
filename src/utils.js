@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import passport from 'passport'
-import { Jwt } from 'jsonwebtoken'
+import Jwt from 'jsonwebtoken'
 
 export const createHash = password => {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10))

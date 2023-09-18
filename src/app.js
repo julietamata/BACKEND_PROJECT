@@ -13,10 +13,10 @@ import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import initializePassport from '../src/config/passport.config.js'
 import cookieParser from 'cookie-parser'
-import { handlePolicies } from './utils.js'
 import dotenv from 'dotenv'
 import config from './config/config.js'
 import cors from 'cors'
+import mockingRouter from './routes/mocking.router.js'
 
 // export const PORT = config.apiserver.port
 
@@ -138,6 +138,8 @@ app.use('/api/carts', cartsRouter)
 app.use('/mongoose', viewsRouter)
 
 app.use('/session', sessionRouter)
+
+app.use('/mockingproducts', mockingRouter)
 
 }catch(err){
     console.log(err.message)
