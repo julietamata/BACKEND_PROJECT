@@ -17,6 +17,7 @@ import dotenv from 'dotenv'
 import config from './config/config.js'
 import cors from 'cors'
 import mockingRouter from './routes/mocking.router.js'
+import errorHandler from './middleware/error.middleware.js'
 
 // export const PORT = config.apiserver.port
 
@@ -140,6 +141,9 @@ app.use('/mongoose', viewsRouter)
 app.use('/session', sessionRouter)
 
 app.use('/mockingproducts', mockingRouter)
+
+app.use(errorHandler)
+
 
 }catch(err){
     console.log(err.message)

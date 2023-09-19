@@ -1,10 +1,11 @@
-import { generateProduct } from "../services/mockingService.js"
+import { generateProduct, createProduct } from "../services/mockingService.js"
 
 const products = []
 
+
 export const getProductsMockingController = async (req, res) => {
     try {
-        for(let i = 0; i < 100; i++ ) {
+        for(let index = 0; index <100; index++) {
             products.push(await generateProduct())
         }
         res.status(200).json({status: "success", payload: products })
@@ -14,5 +15,13 @@ export const getProductsMockingController = async (req, res) => {
     }
 }
 
-// let i = 0; i < 100; i++
-// let index = 0; index <100; index++
+
+export const createProductMockingController = async (req, res, next) => {
+    try {
+        const product = await createProduct(req)
+        products.push(product)
+        res.status(201).json({ status: "success", payload: products })
+    } catch (error) {
+        next(error)
+    }
+}
