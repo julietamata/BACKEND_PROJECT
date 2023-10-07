@@ -5,6 +5,7 @@ import cartsModel from "../dao/models/carts.model.js";
 // import { passportCall } from "../utils.js";
 import UserModel from "../dao/models/users.model.js";
 import { CartService, MessageService, ProductService } from "../services/index.js";
+import logger from "../utils/logger.js";
 
 
 
@@ -38,6 +39,9 @@ export const getViewsProductsController = async(req, res) => {
                                                 : ''
         //  const products = await result.find().lean().exec()
         console.log(result)
+
+        
+        logger.info("Info"); ///////////////logger
     
         // const user = await UserModel.findById(req.session?.passport?.user).lean().exec();
     
@@ -67,6 +71,10 @@ export const viewsRealTimeProductsController = async(req, res) => {
         res.render('realTimeProducts', { products })
       } catch (error) {
         console.log(error);
+        
+        logger.info("Info"); ///////////////logger
+
+
         res.status(500).json({ status: 'error', error: error.message })
       }
 } 
@@ -80,6 +88,8 @@ export const viewsChatController = async(req, res) => {
         res.render("chat", { messages });
       } catch (error) {
         console.log(error);
+
+        
         res.status(500).json({ error: error });
       }
   }

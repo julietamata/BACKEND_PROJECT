@@ -18,6 +18,7 @@ import config from './config/config.js'
 import cors from 'cors'
 import mockingRouter from './routes/mocking.router.js'
 import errorHandler from './middleware/error.middleware.js'
+import loggerTest from './routes/loggerTest.router.js'
 
 // export const PORT = config.apiserver.port
 
@@ -142,7 +143,11 @@ app.use('/session', sessionRouter)
 
 app.use('/mockingproducts', mockingRouter)
 
+app.use('/loggerTest', loggerTest )
+
+
 app.use(errorHandler)
+
 
 
 }catch(err){
