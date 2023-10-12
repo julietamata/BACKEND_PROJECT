@@ -21,7 +21,7 @@ paths:
     post:
       summary: Crea productos nuevos
       tags: 
-        -Products
+        - Products
       security:
         - bearerAuth: []
       requestBody:
@@ -32,27 +32,27 @@ paths:
               type: object
               properties:
                 title:
-                  type: String
+                  type: string
                   required: True
                 category:
-                  type: String
+                  type: string
                   required: True
                 description:
-                  type: String
+                  type: string
                   required: True
                 price:
-                  type: Number
+                  type: number
                   required: True
                 code:
-                  type: Number
+                  type: number
                   required: True
                 status:
-                  type: Boolean
+                  type: boolean
                 stock:
-                  type: Number
+                  type: number
                   required: True
                 thumbnails:
-                  type: String
+                  type: string
               required:
                 - title
                 - description
@@ -73,48 +73,6 @@ paths:
 
     
                      
-
-
-components:
-  schemas:
-    Product:
-      type: object
-      properties:
-        _id:
-          type: ObjectId
-          description: Id autogenerado por mongo
-        title:
-          type: String
-          description: Nombre del producto
-        description:
-          type: String
-          description: Descripción del producto
-        price:
-          type: Number
-          description: Precio del producto
-        code:
-          type: Number
-          description: Código único del producto
-        status:
-          type: Boolean 
-          description: True or false
-        stock:
-          type: Number
-          description: Cantidad disponible en inventario
-        category:
-          type: String
-          description: Categoría a la que pertenece
-        thumbnails:
-          type: String
-          description: Imagenes del producto
-      required:
-        - title
-        - description
-        - category
-        - price
-        - code
-        - stock
-
         
 
   /api/products/{productId}:
@@ -153,27 +111,27 @@ components:
               type: object
               properties:
                 title:
-                  type: String
+                  type: string
                   required: True
                 category:
-                  type: String
+                  type: string
                   required: True
                 description:
-                  type: String
+                  type: string
                   required: True
                 price:
-                  type: Number
+                  type: number
                   required: True
                 code:
-                  type: Number
+                  type: number
                   required: True
                 status:
-                  type: Boolean
+                  type: boolean
                 stock:
-                  type: Number
+                  type: number
                   required: True
                 thumbnails:
-                  type: String
+                  type: string
               required:
                 - title
                 - description
@@ -212,3 +170,48 @@ components:
                   $ref: '#/components/schemas/Product'
         "500":
           description: Error al eliminar el producto.
+
+
+
+
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Id autogenerado por mongo
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        code:
+          type: number
+          description: Código único del producto
+        status:
+          type: boolean 
+          description: True or false
+        stock:
+          type: number
+          description: Cantidad disponible en inventario
+        category:
+          type: string
+          description: Categoría a la que pertenece
+        thumbnails:
+          type: string
+          description: Imagenes del producto
+      required:
+        - title
+        - description
+        - category
+        - price
+        - code
+        - stock
+
