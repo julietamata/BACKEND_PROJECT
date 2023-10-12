@@ -70,15 +70,15 @@ const product = new ProductManager();
 //endpoints mongoose data onwire
 
 
-router.get('/mongoose', getProductsController)
+router.get('/', getProductsController)
 
-router.get('/mongoose/:pid', getProductByIdController)
+router.post('/', handlePolicies(["ADMIN"]), createProductController) 
 
-router.post('/mongoose', handlePolicies(["ADMIN"]), createProductController) 
+router.get('/:pid', getProductByIdController)
 
-router.put('/moongose/:pid', handlePolicies(["ADMIN"]), updateProductController)
+router.put('/:pid', handlePolicies(["ADMIN"]), updateProductController)
 
-router.delete('/moongose/:pid', handlePolicies(["ADMIN"]), deleteProductController)
+router.delete('/:pid', handlePolicies(["ADMIN"]), deleteProductController)
 
 
 

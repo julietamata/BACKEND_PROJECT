@@ -19,6 +19,11 @@ import cors from 'cors'
 import mockingRouter from './routes/mocking.router.js'
 import errorHandler from './middleware/error.middleware.js'
 import loggerTest from './routes/loggerTest.router.js'
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUiExpress from 'swagger-ui-express'
+
+
+
 
 // export const PORT = config.apiserver.port
 
@@ -27,6 +32,27 @@ const uri = config.uri
 const dbname = config.dbname
 
 const app = express()
+
+
+const SwaggerOptions = {
+    
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación de la API de SaraMorchio Ecommerce',
+            description: 'Sara Morchio new brand'
+        }
+    },
+    
+    apis: ['./docs/**/*.yaml']
+}
+
+const specs = swaggerJSDoc(SwaggerOptions)
+app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
+
+
+
+
 
 
 app.use(express.json())

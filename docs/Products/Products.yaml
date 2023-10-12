@@ -1,0 +1,214 @@
+paths: 
+  /api/products/:
+    get:
+      summary: Obtiene todos los productos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos han sido obtenidos satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        "500":
+          description: Error al obtener productos
+
+
+
+    post:
+      summary: Crea productos nuevos
+      tags: 
+        -Products
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: String
+                  required: True
+                category:
+                  type: String
+                  required: True
+                description:
+                  type: String
+                  required: True
+                price:
+                  type: Number
+                  required: True
+                code:
+                  type: Number
+                  required: True
+                status:
+                  type: Boolean
+                stock:
+                  type: Number
+                  required: True
+                thumbnails:
+                  type: String
+              required:
+                - title
+                - description
+                - category
+                - price
+                - code
+                - stock
+      responses:
+        "200":
+          description: Los productos han sido obtenidos satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "500":
+          description: Error al obtener productos
+
+
+    
+                     
+
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado por mongo
+        title:
+          type: String
+          description: Nombre del producto
+        description:
+          type: String
+          description: Descripción del producto
+        price:
+          type: Number
+          description: Precio del producto
+        code:
+          type: Number
+          description: Código único del producto
+        status:
+          type: Boolean 
+          description: True or false
+        stock:
+          type: Number
+          description: Cantidad disponible en inventario
+        category:
+          type: String
+          description: Categoría a la que pertenece
+        thumbnails:
+          type: String
+          description: Imagenes del producto
+      required:
+        - title
+        - description
+        - category
+        - price
+        - code
+        - stock
+
+        
+
+  /api/products/{productId}:
+    get:
+      tags:
+        - Products
+      summary: Obtener un producto por Id
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El producto ha sido obtenido satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Product'
+        "500":
+          description: Error al obtener productos
+
+    put:
+      tags:
+        - Products
+      summary: Actualizar un producto
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: String
+                  required: True
+                category:
+                  type: String
+                  required: True
+                description:
+                  type: String
+                  required: True
+                price:
+                  type: Number
+                  required: True
+                code:
+                  type: Number
+                  required: True
+                status:
+                  type: Boolean
+                stock:
+                  type: Number
+                  required: True
+                thumbnails:
+                  type: String
+              required:
+                - title
+                - description
+                - category
+                - price
+                - code
+                - stock
+      responses:
+        "200":
+          description: El producto se ha actualizado satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "500":
+          description: Error al actualizar productos
+
+
+    delete:
+      tags:
+        - Products
+      summary: Borrar un producto por Id
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El producto ha eliminado satisfactoriamente.
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Product'
+        "500":
+          description: Error al eliminar el producto.
