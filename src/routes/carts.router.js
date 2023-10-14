@@ -60,25 +60,25 @@ const carts = new CartManager
 
 // Ver carritos 
 
-router.get('/mongoose', getCartsController)
+router.get('/', getCartsController)
 
-router.get('/mongoose/:cid', getCartsByIdController)
+router.post("/", createCartController);
 
-router.post("/mongoose", createCartController);
+router.get('/:cid', getCartsByIdController)
 
-router.post("/mongoose/:cid/product/:pid", handlePolicies(["USER"]),addProductsToCartController);
+router.delete("/:cid", deleteCartController)
 
-router.delete("/mongoose/:cid/product/:pid", deleteProductOfCartController);
+router.put("/:cid", updateCartController);
 
-router.delete("/mongoose/:cid", deleteCartController)
+router.post("/:cid/product/:pid", handlePolicies(["USER"]),addProductsToCartController);
 
-router.put("/mongoose/:cid", updateCartController);
+router.delete("/:cid/product/:pid", deleteProductOfCartController);
 
-router.put("/mongoose/:cid/product/:pid", updateQuantityProductCartController);
+router.put("/:cid/product/:pid", updateQuantityProductCartController);
 
-router.post("/mongoose/sendticket", getbill);
+router.post("/sendticket", getbill);
 
-router.post("/mongoose/sendorder", sendSMS);
+router.post("/sendorder", sendSMS);
 
 
 export default router

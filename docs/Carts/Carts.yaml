@@ -1,0 +1,298 @@
+paths:
+  /api/carts/:
+    get:
+      summary: Obtiene los carritos
+      tags:
+        - Carts
+      responses: 
+        '200':
+          description: Los productos han sido obtenidos satisfactoriamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al obtener los productos
+    
+    post:
+      summary: Crea un carrito nuevo
+      tags:
+        - Carts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product:
+                        type: string
+                        format: ObjectId
+                        description: ID del producto añadido al carrito
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                purchase_datetime:
+                  type: string
+                  format: date-time
+                code:
+                  type: string
+              required:
+                - items
+                - purchase_datetime
+                - code
+      responses:
+        '200':
+          description: Añadido correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al añadir el producto
+
+  /api/carts/{cartId}:
+    get:
+      tags: 
+        - Carts
+      summary: Obtener el carrito por el Id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Id del carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Se ha obtenido correctamente el carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al obtener el carrito
+    
+    delete:
+      tags: 
+        - Carts
+      summary: Borrar un carrito con su Id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Id del carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Se ha borrado el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al borrar el carrito.
+    put:
+      tags: 
+        - Carts
+      summary: Actualizar un carrito con su Id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Id del carrito
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product:
+                        type: string
+                        format: ObjectId
+                        description: Id del producto añadido al carrito
+                      cantidad:
+                        type: number
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                purchase_datetime:
+                  type: string
+                  format: date-time
+                code:
+                  type: string
+              required:
+                - items
+                - purchase_datetime
+                - code
+      responses:
+        '200':
+          description: Se ha actualizado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al actualizar el carrito.
+
+  /api/carts/{cartId}/product/{productId}:
+    post:
+      summary: Add product to cart
+      tags:
+        - Carts
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Id del carrito
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          description: Id del producto a agregar al carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto añadido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al añadir el producto
+    
+    
+    delete:
+      summary: Eliminar producto del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Id del carrito
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          description: Id del producto a eliminar del carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al eliminar el producto del carrito.
+
+    put:
+      summary: Actualizar producto del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Id del carrito
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          description: Id del producto a actualizar del carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al actualizar el producto del carrito.
+
+  /api/carts/sendticket:
+    post:
+      tags: 
+        - Ticket
+      summary: Mandar ticket del carrito
+      responses:
+        '200':
+          description: Ticket enviado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al enviar el ticket del producto.
+
+  /api/carts/sendorder:
+    post:
+      tags: 
+        - Orden
+      summary: Mandar SMS de la orden del carrito
+      responses:
+        '200':
+          description: SMS enviado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '500':
+          description: Error al enviar el SMS.
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                $ref: '#/components/schemas/Product'
+              cantidad:
+                type: number
+        user:
+          type: object
+          properties:
+            email:
+              type: string
+        purchase_datetime:
+          type: string
+          format: date-time
+        code:
+          type: string
+      required:
+        - items
+        - purchase_datetime
+        - code
