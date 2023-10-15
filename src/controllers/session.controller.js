@@ -1,5 +1,7 @@
 // Vista de Login
 
+import logger from "../utils/logger";
+
 export const loginController = async (req, res) => {
     res.render("session/login");
      };
@@ -108,8 +110,9 @@ export const registerPassportController = async (req, res) => {
 
 
 export const loginPassportController = async (req, res) => {
-    res.redirect('/mongoose/products')
-    console.log(req.user);
+    res.redirect('/products')
+    // console.log(req.user);
+    logger.info(req.user);
      };
 
 // Ruta con github
@@ -122,8 +125,8 @@ export const githubController = async (req, res) => {};
  export const githubCallbackController = async (req, res) => {
     console.log('Callback: ', req.user)
     req.session.user = req.user
-    console.log('User session:', req.session.user)
-    res.redirect('/mongoose/products')
+    logger.info('User session:', req.session.user)
+    res.redirect('/products')
  };
 
  
@@ -144,7 +147,7 @@ export const errorsController = async (req, res) => {
 export const logoutController = async (req, res) => {
     req.session.destroy((err) => {
         if (err) {
-          console.log(err);
+          logger.error(err);
           res.status(500).render('partials/errors', { error: err });
         } else res.redirect("/session/login");
       });
@@ -153,7 +156,7 @@ export const logoutController = async (req, res) => {
 export const currentController = async (req, res) => {
     if(!req.session.user) return res.status(401).json({status: 'error', error: 'Favor de iniciar sesión'})
   res.status(200).json({status: 'success', payload: req.session.user})
-   console.log(req.session)
+   logger.info(req.session)
 };
 
 export const currentViewController = (req, res) => {

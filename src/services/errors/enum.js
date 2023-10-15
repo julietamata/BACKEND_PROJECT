@@ -1,6 +1,8 @@
 export const EErrors = {
     ROUTING_ERROR: 1,
     INVALID_TYPES_ERROR: 2,
-    DATABASES_ERROR: 3
+    DATABASES_ERROR: 3,
+    INVALID_PRODUCT: 4,
+    INVALID_CART: 5
 }
 

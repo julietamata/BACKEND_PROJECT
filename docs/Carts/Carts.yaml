@@ -158,6 +158,8 @@ paths:
   /api/carts/{cartId}/product/{productId}:
     post:
       summary: Add product to cart
+      security:
+        - bearerAuth: ["USER"]
       tags:
         - Carts
       parameters:
@@ -268,6 +270,26 @@ paths:
         '500':
           description: Error al enviar el SMS.
 
+  /api/carts/{cartId}/purchase:
+    get:
+      tags:
+        - Carts
+      summary: Datos totales de la compra
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Id del carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Se ha enviado el ticket exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseDetails'
+
 components:
   schemas:
     Cart:
@@ -296,3 +318,22 @@ components:
         - items
         - purchase_datetime
         - code
+
+    PurchaseDetails:
+      type: object
+      properties:
+        total:
+          type: number
+          description: Precio total de los productos
+        items:
+          type: array
+          description: Lista de los productos
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+                description: Id del producto.
+              quantity:
+                type: integer
+                description: Cantidad del producto.

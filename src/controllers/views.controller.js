@@ -38,10 +38,9 @@ export const getViewsProductsController = async(req, res) => {
         result.nextLink = result.hasNextPage ? `/mongoose/products?page=${result.nextPage}`
                                                 : ''
         //  const products = await result.find().lean().exec()
-        console.log(result)
-
-        
-        logger.info("Info"); ///////////////logger
+        // console.log(result)
+        logger.info(result);        
+        logger.info("Visualización de los productos existentes"); ///////////////logger
     
         // const user = await UserModel.findById(req.session?.passport?.user).lean().exec();
     
@@ -58,7 +57,7 @@ export const getViewsProductsController = async(req, res) => {
           )
     
       } catch (error) {
-        console.log(error);
+        logger.error(error);;
         res.status(500).json({ status: 'error', error: error.message });
       }
 }
@@ -70,9 +69,7 @@ export const viewsRealTimeProductsController = async(req, res) => {
 
         res.render('realTimeProducts', { products })
       } catch (error) {
-        console.log(error);
-        
-        logger.info("Info"); ///////////////logger
+                logger.error(error);; ///////////////logger
 
 
         res.status(500).json({ status: 'error', error: error.message })
@@ -87,8 +84,8 @@ export const viewsChatController = async(req, res) => {
 
         res.render("chat", { messages });
       } catch (error) {
-        console.log(error);
-
+        // console.log(error);
+        logger.error(error);
         
         res.status(500).json({ error: error });
       }
@@ -106,7 +103,7 @@ export const viewsCartController = async(req, res) => {
           return res.status(404).json({status: 'error', error: 'El carrito no existe'})
         }
         res.render('carts', {cid: result._id, products: result.products})
-        console.log(result)
+        logger.info(result);
       }catch(err){
         res.status(500).json({status: 'error', error: err.message})
       }

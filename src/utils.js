@@ -54,3 +54,37 @@ export const generateToken = user => {
 //     next()
 // })
 // }
+
+
+//Purchase
+
+export const generateTicketCode = () => {
+  
+    const randomPart = Math.floor(Math.random() * 9000) + 1000
+    const timestampPart = new Date().getTime().toString()
+    const ticketCode = randomPart + timestampPart
+
+    return ticketCode;
+  }
+
+  
+export const calculateTicketAmount = async (cart) => {
+    let totalAmount = 0;
+  
+    for (const cartProduct of cart.products) {
+      const productId = cartProduct.product;
+      const desiredQuantity = cartProduct.quantity;
+  
+      const product = await ProductService.getById(productId)
+  
+      if (!product) {
+        throw new Error("Product not found");
+      }
+  
+      if (product.stock >= desiredQuantity) {
+        totalAmount += product.price * desiredQuantity;
+      }
+    }
+  
+    return totalAmount;
+  };

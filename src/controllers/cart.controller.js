@@ -1,11 +1,18 @@
 import CartManager from "../dao/fsManagers/CartManager.js";
 import cartsModel from "../dao/models/carts.model.js";
 import productModel from "../dao/models/products.model.js";
+import ticketModel from '../dao/models/tickets.model.js'
 import { CartService, ProductService } from "../services/index.js";
 import config from "../config/config.js";
 import Mailgen from "mailgen";
 import twilio from 'twilio'
 import nodemailer from 'nodemailer'
+import { generateTicketCode, calculateTicketAmount } from "../utils.js";
+import CustomError from "../services/errors/custom_error.js";
+import { EErrors } from "../services/errors/enum.js";
+import { generateProductAddCartErrorInfo,generateCartErrorInfo, generateDatabaseErrorInfo  } from "../services/errors/info.js";
+import logger from "../utils/logger.js";
+
 
 const nodemailuser = config.nodemailuser
 const nodemailpass = config.nodemailpass
@@ -57,9 +64,14 @@ export const getCartsController = async(req, res) => {
 		// const result = await cartsModel.find().lean().exec()
 		const result = await CartService.getAll()
 		res.status(201).json({status: 'success', payload:result})
-		console.log(result)
+		logger.info(result)
 	} catch(err) {
-		res.status(500).json({status: 'error', error: 'No hay carritos'})
+		CustomError.createError({
+			name: "Cart not created",
+			cause: generateDatabaseErrorInfo(),
+			message: "No data",
+			code: EErrors.DATABASES_ERROR
+		})
 	}
 }
 	 
@@ -68,15 +80,28 @@ export const getCartsByIdController = async(req, res) => {
     try{
 		const cartId = req.params.cid
 		// const result = await cartsModel.findById(cartId).lean().exec()
-		const result = await CartService.getById()
+		const cart = await CartService.getById()
 
-		if (result === null) { 
-		res.status(500).json({status: 'error', error: err.message})
+		let totalAmount = 0;
+
+		for (const item of cart.products) {
+		  const product = item.product;
+		  const quantity = item.quantity;
+	
+		  if (product && product.price) {
+			totalAmount += product.price * quantity;
+		  }
 		}
-		res.status(201).json({status: 'success', payload:result})
+	
+		res.status(200).json({ status: "success", payload: { cart, totalAmount } });
 		
 	} catch(err) {
-		res.status(500).json({status: 'error', error: err.message})
+		CustomError.createError({
+			name: "Cart does not exist",
+			cause: generateCartErrorInfo({cid}),
+			message: "Not correct data",
+			code: EErrors.INVALID_CART
+		})
 	}
 }
 
@@ -89,7 +114,7 @@ export const createCartController = async (req, res) => {
 
 		res.json({ status: "success", payload: addCart });
 	  } catch (error) {
-		console.log(error);
+		logger.error(error);
 		return res.status(500).json({ error: error.message });
 	  }
 }
@@ -111,7 +136,12 @@ export const addProductsToCartController = async (req, res) => {
 		const cart = await CartService.getById(cartId)
 
 		if (!cart) {
-		  return res.status(404).json({ error: "El carrito no existe" });
+			CustomError.createError({
+				name: "Cart does not exist",
+				cause: generateCartErrorInfo({cid}),
+				message: "Not correct data",
+				code: EErrors.INVALID_CART
+			})
 		}
 		
 		const productExists = cart.products.findIndex(
@@ -131,8 +161,13 @@ export const addProductsToCartController = async (req, res) => {
 		const result = await cart.save();
 		res.json({ status: "success", payload: result });
 	  } catch (error) {
-		console.log(error);
-		return res.status(500).json({ error: "Error en el servidor" });
+		logger.error(error);
+		CustomError.createError({
+			name: "Product not added",
+			cause: generateProductAddCartErrorInfo({productId}),
+			message: "Favor de verificar el producto a añadir",
+			code: EErrors.INVALID_PRODUCT
+		})
 	  }
 }
 
@@ -149,7 +184,13 @@ export const deleteProductOfCartController = async (req, res) => {
 		  { new: true }
 		);
 		if (result === null) {
-		  res.status(500).json({ status: 'error', error: 'No se encontró el carrito o el producto' });
+		//   res.status(500).json({ status: 'error', error: 'No se encontró el carrito o el producto' });
+		  CustomError.createError({
+			name: "Not deleted",
+			cause: generateDatabaseErrorInfo(),
+			message: "No se encontró el carrito o el producto",
+			code: EErrors.DATABASES_ERROR
+		})
 		}
 		res.status(201).json({ status: 'success', message: "Producto eliminado del carrito" });
 	  } catch (err) {
@@ -213,7 +254,7 @@ export const updateCartController = async (req, res) => {
 		const result = await cart.save();
 		res.json({ status: "success", payload: result });
 	  } catch (error) {
-		console.log(error);
+		logger.error(error);
 		return res.status(500).json({ error: "Error en el servidor" });
 	  }
 }
@@ -248,7 +289,7 @@ export const updateQuantityProductCartController = async (req, res) => {
 		const result = await cart.save();
 		res.json({ status: "success", payload: result });
 	  } catch (error) {
-		console.log(error);
+		logger.error(error);
 		return res.status(500).json({ error: "Error en el servidor" });
 	  }
 }
@@ -272,21 +313,40 @@ export const getbill = (req, res) => {
         }
     })
 
-    let content = {
-        body: {
-            intro: 'Tu ticket de compra',
-            table: {
-                data: [
-                    {
-                        item: 'Zapatos colección love-hate',
-                        description: 'Pronto recibirás tu pedido!',
-                        price: '$800'
-                    }
-                ]
-            },
-            outro: 'Gracias por tu compra'
-        }
-    }
+    
+	let productsData = ticket.products.map((prod) => ({
+		item: prod.product.title,
+		quantity: prod.quantity,
+		price: `$${prod.product.price}`,
+	  }));
+	
+	  let content = {
+		body: {
+		  name: ticket.purchaser,
+		  intro: "Su orden ha sido procesada",
+		  dictionary: {
+			date: moment(ticket.purchase_datetime).format("DD/MM/YYYY HH:mm:ss"),
+		  },
+		  table: {
+			data: productsData,
+			columns: {
+			  customWidth: {
+				item: "70%",
+				price: "30%",
+			  },
+			  customAlignment: {
+				item: "left",
+				price: "right",
+			  },
+			},
+		  },
+		  outro: `Total: $${ticket.totalAmount}`,
+		  signature: false,
+		},
+	  };
+
+
+
     let mail = Mailgenerator.generate(content)
 
     let message = {
@@ -310,3 +370,86 @@ export const sendSMS = (req, res) => {
         })
         .then(message => res.send(message.sid));
 }
+
+export const getPurchaseController = async (req, res) => {
+	try {
+		const cartId = req.params.cid;
+		let cart = await CartService.getById(cartId)
+		const user = req.user.user
+	
+		logger.info(user)
+		if (!cart) {
+		  throw new Error("Cart not found");
+		}
+	
+		const ticketProducts = [];
+		const failedToPurchase = [];
+	
+		const totalAmount = await calculateTicketAmount(cart)
+	
+		for (const cartProduct of cart.products) {
+		  const productId = cartProduct.product;
+		  const desiredQuantity = cartProduct.quantity;
+	
+		  const product = await ProductService.getById(productId)
+	
+		  if (!product) {
+			throw new Error("Product not found");
+		  }
+	
+		  if (product.stock >= desiredQuantity) {
+			product.stock -= desiredQuantity;
+			await product.save();
+	
+			ticketProducts.push({
+			  productId: product._id,
+			  quantity: desiredQuantity,
+			  name: product.title,  
+			  price: product.price  
+			});
+	
+			
+			const updatedCart = await CartService.update(
+			  cartId,
+			  {
+				$pull: { products: { product: productId } },
+			  },
+			  { new: true }
+			);
+			cart = updatedCart 
+		  } else {
+			failedToPurchase.push(product._id);
+		  }
+		}
+		
+		if (ticketProducts.length > 0) {
+	
+		  const ticket = new ticketModel({
+			code: generateTicketCode(),
+			purchase_datetime: new Date(),
+			amount: totalAmount, 
+			purchaser: `${user.first_name} ${user.last_name}`  || null , 
+			products: ticketProducts, 
+		  })
+	
+		  await getBill(ticket, user.email)
+	
+		  await ticket.save()
+	
+		  res.status(200).json({ status: "success", payload: ticket });
+		} else {
+		  res.status(400).json({status: "error", message: "Producto no disponible", failedProducts: failedToPurchase});
+		}
+	  } catch (error) {
+		return res.status(500).json({ status: "error", error: error.message });
+	  }
+	}
+	
+	export const getUserCartController = (req, res) => {
+	  const userCart = req.user.user.cart 
+	
+	
+	  res.json({ userCart });
+
+
+  };

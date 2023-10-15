@@ -12,7 +12,8 @@ import {getCartsController,
         updateCartController, 
         updateQuantityProductCartController,
         getbill,
-        sendSMS 
+        sendSMS,
+        getPurchaseController 
         } from "../controllers/cart.controller.js"
 import { handlePolicies } from "../middleware/auth.middleware.js";
 
@@ -79,6 +80,8 @@ router.put("/:cid/product/:pid", updateQuantityProductCartController);
 router.post("/sendticket", getbill);
 
 router.post("/sendorder", sendSMS);
+
+router.post("/:cid/purchase", getPurchaseController)
 
 
 export default router

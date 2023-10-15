@@ -1,4 +1,5 @@
 import { generateProduct, createProduct } from "../services/mockingService.js"
+import logger from "../utils/logger.js"
 
 const products = []
 
@@ -10,7 +11,7 @@ export const getProductsMockingController = async (req, res) => {
         }
         res.status(200).json({status: "success", payload: products })
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         return res.status(400).json({ status: "error", error: error.message })
     }
 }

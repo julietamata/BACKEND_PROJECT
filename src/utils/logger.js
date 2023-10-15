@@ -73,12 +73,6 @@ const createLogger = env => {
     }
 }
 
-const loggder = winston.createLogger({
-    
-    
-
-    
-})
 
 const logger = createLogger(process.env.ENVIRONMENT)
 

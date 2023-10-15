@@ -4,6 +4,11 @@ import usersModel from "../dao/models/users.model.js";
 import { isValidPassword, createHash } from "../utils.js";
 import GitHubStrategy from 'passport-github2'
 import cartsModel from "../dao/models/carts.model.js";
+import CustomError from "../services/errors/custom_error.js";
+import { EErrors } from "../services/errors/enum.js";
+import { generateDatabaseErrorInfo } from "../services/errors/info.js";
+import logger from "../utils/logger.js";
+
 // import jwt from "passport-jwt"
 
 
@@ -81,7 +86,7 @@ const initializePassport = () => {
         clientSecret: '7bdb7503881ee95f7d91de95e7483fd26202a847',
         callbackURL: 'http://localhost:8080/session/githubcallback'
     }, async (accessToken, refreshToken, profile, done) => {
-        console.log(profile);
+        logger.info(profile);
         try {
             const existingUser = await usersModel.findOne({ email: profile._json.email });
             if (existingUser) return done(null, existingUser);
@@ -103,7 +108,7 @@ const initializePassport = () => {
                     return done(`Error to login with Github => ${err.message}`);
                 });
         } catch (err) {
-            console.log('Error during GitHub authentication:', err);
+            logger.error('Error during GitHub authentication:', err);
             return done(`Error to login with Github => ${err.message}`);
         }
     }));
@@ -145,7 +150,12 @@ const initializePassport = () => {
         if(!isValidPassword(user, password)) return done(null, false)
             return done(null, user)
         } catch(err){
-
+            CustomError.createError({
+                name: "Error al encontrar el usuario",
+                cause: generateDatabaseErrorInfo(),
+                message: "Error al obtener el usuario",
+                code: EErrors.DATABASES_ERROR
+            })
      }
     })
     )

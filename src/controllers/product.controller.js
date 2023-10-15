@@ -1,6 +1,10 @@
 import ProductManager from "../dao/fsManagers/ProductManager.js";
 import productModel from "../dao/models/products.model.js";
+import CustomError from "../services/errors/custom_error.js";
+import { EErrors } from "../services/errors/enum.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 import { ProductService } from "../services/index.js";
+import logger from "../utils/logger.js";
 
 const product = new ProductManager();
 
@@ -87,6 +91,7 @@ export const getProductByIdController = async (req, res) => {
 		
 	} catch(err) {
 		res.status(500).json({status: 'error', error: err.message})
+		logger.error("Error");
 	}
 }
 
@@ -103,7 +108,16 @@ export const createProductController = async (req, res) => {
     res.status(201).json({status: 'success', payload: result})
 
     }catch(err){
+		CustomError.createError({
+			name: "Failure product creation error",
+			cause: generateProductErrorInfo({title, description, price, code, stock, category}),
+			message: "Error al crear un usuario",
+			code: EErrors.INVALID_TYPES_ERROR
+		})
+		
+
         res.status(500).json({status:'error', error: err.message})
+		logger.error("Error");
     }
 }
 
@@ -124,6 +138,7 @@ export const updateProductController = async (req, res) => {
 		res.status(201).json({status: 'success', payload: result})
 	} catch(err){
 		res.status(500).json({status:'error', error: err.message})
+		logger.error("Error");
 	}
 }
 
@@ -144,5 +159,6 @@ export const deleteProductController = async (req, res) => {
 
 	}catch(err) {
 		res.status(500).json({status:'error', error: err.message})
+		logger.error("Error");
 	}
 }
